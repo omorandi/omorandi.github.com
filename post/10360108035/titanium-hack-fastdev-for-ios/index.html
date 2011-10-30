@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Titanium Hack: FastDev for iOS - Titanium Ninja</title>
+  <meta name="author" content="TiNinja">
+
+  
+  <meta name="description" content="Testing large Titanium Mobile applications on iOS devices can be cumbersome, since the build &amp; deploy process can take several minutes, even when &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://titaniumninja.com/post/10360108035/titanium-hack-fastdev-for-ios">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Alike+Angular' rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Titanium Ninja</a></h1>
+  
+    <h2>Appcelerator Titanium Mobile Hacks</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:titaniumninja.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">whoami</a></li>	
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Titanium Hack: FastDev for iOS</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+  
+
+<time datetime="2011-09-18T00:00:00+02:00" pubdate>Sep 18<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Testing large Titanium Mobile applications on iOS devices can be cumbersome, since the build &amp; deploy process can take several minutes, even when the project is launched directly from XCode. Repeating the same process each time, for checking the effect of small modifications to the code is then quite annoying and time consuming.</p>
+
+
+
+<p>I just posted a small project on github at <a href="https://github.com/omorandi/TiiOSFastDev"><a href="https://github.com/omorandi/TiiOSFastDev">https://github.com/omorandi/TiiOSFastDev</a></a> that aims at solving this issue.</p>
+
+
+
+<p>It is a quite hackish solution that allows you to change on the fly the application resource files of your project and get them pulled by your app (either on device or simulator) without needing to rebuild it, sign it, and re-deploy it.</p>
+
+
+
+<p>The solution consists in a bunch of scripts that perform these operations:</p>
+
+
+
+<ol><li><p> patch your Titanium SDK folder (or, better, a copy of it)</p></li>
+
+<li><p>start an HTTP server in the Resources directory of your Titanium Mobile project</p></li>
+
+</ol><p>Once these steps are completed, you can build your app and deploy it to the device for testing. Should you find you need to fix some of your program files, just do it, manually restart the app, and proceed with testing, without needing to rebuild &amp; redeploy it.</p>
+
+
+
+<p>This process is similar to the one involved using the fastdev feature for Android, however the mechanism is not managed by Titanium Studio, and involves a series of steps to be performed manually.</p>
+
+
+
+<p>The Ti SDK patching script expects you to work with a 1.8.X Titanium Mobile SDK. It can be modified in order to work with 1.7.X versions, however this is not currently supported.</p>
+
+
+
+<p>The http server is implemented as a simple node js script, so for executing it you need a working node environment in your system (you can grab it from <a href="http://nodejs.org/"><a href="http://nodejs.org/">http://nodejs.org/</a></a> ).</p>
+
+
+
+<h1>How to use it</h1>
+
+
+
+<p>First, check out the <a href="https://github.com/omorandi/TiiOSFastDev">TiiOSFastDev repository</a>  from github.</p>
+
+
+
+<p>In the following steps I use the following symbols for the involved directories:</p>
+
+
+
+<pre><code>$TI_FASTDEV_DIR (the directory containing this repository)
+
+$TI_SDK_DIR (usually /Library/Application\ Support/Titanium)
+
+$PRJ_DIR (The root directory of your Ti Mobile App project)
+
+</code></pre>
+
+
+
+<ol><li><p>Check out your Titanium Mobile directory under <code>$TI_SDK_DIR</code>. There you&#8217;ll find one or more directories of the SDKs installed in your system.</p></li>
+
+<li><p>Create a copy of the SDK directory you want to patch and call it for example <code>1.8.0-fastdev</code> (actually you&#8217;ll want to keep the original SDK directory intact for the normal development workflow)</p></li>
+
+<li><p>In a terminal window, go to the directory that contains the files of this repository (<code>$TI_FASTDEV_DIR</code>) and perform the following:</p>
+
+
+
+<p><code>./patch.sh 1.8.0-fastdev</code></p></li>
+
+<li><p>Launch your Ti Mobile application from Titanium Studio or through your preferred method. This is needed in order to re-create the <code>build/iphone</code> directory in your project, with the patched files. If this doesn&#8217;t happen, just clean the project and relaunch it</p></li>
+
+<li><p>For your convenience, create an alias for the <code>startserver.py</code>script:</p>
+
+
+
+<p><code>alias fdstart='$TI_FASTDEV_DIR/startserver.py'</code></p></li>
+
+<li><p>Then <code>cd</code> in the <code>Resources</code> directory of your Titanium Mobile application project, for example:</p>
+
+
+
+<p><code>cd $PRJ_DIR/Resources</code></p></li>
+
+<li><p>Using the previously created alias, you can start the server with:</p>
+
+
+
+<p><code>fdstart</code></p></li>
+
+<li><p>That&#8217;s it, you can now restart the application from Ti Studio (if you want to use the simulator), deploy it on the device, or, better, build the app for device in XCode (by opening the XCode project you find in <code>$PRJ_DIR/build/iphone</code>, sign the product and install it on device. From now on your application JS files are pulled through the server you started in the <code>Resources</code> directory of your project.</p></li>
+
+<li><p>Enjoy the time you have saved with this hack ;-)</p></li>
+
+</ol><h1>Demo video</h1>
+
+
+
+<p>I made a demo for showing how this hack can be used. Please note that when launching the project from XCode I select the Simulator target only for convenience (it&#8217;s not that easy to show the iphone screen output in a screencast):</p>
+
+
+
+<iframe src="http://player.vimeo.com/video/29218138?title=0&amp;byline=0&amp;portrait=0" width="400" height="300" frameborder="0" webkitallowfullscreen allowfullscreen></iframe>
+
+
+
+<p><a href="http://vimeo.com/29218138">Titanium Mobile iOS FastDev hack demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">TiNinja</span></span>
+
+      
+
+
+
+
+  
+
+<time datetime="2011-09-18T00:00:00+02:00" pubdate>Sep 18<span>th</span>, 2011</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/post/10360108035/titanium-hack-fastdev-for-ios" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/post/10360108035/titanium-hack-fastdev-for-ios" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/post/9952431938/tracing-objective-c-message-calls" title="Previous Post: Tracing objective-c message calls">&laquo; Tracing objective-c message calls</a>
+      
+      
+        <a class="basic-alignment right" href="/post/10559549700/fastdev-for-ios-how-it-works" title="next Post: FastDev for iOS: how it works">FastDev for iOS: how it works &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/post/10559549700/fastdev-for-ios-how-it-works">FastDev for iOS: how it works</a>
+      </li>
+    
+      <li class="post">
+        <a href="/post/10360108035/titanium-hack-fastdev-for-ios">Titanium Hack: FastDev for iOS</a>
+      </li>
+    
+      <li class="post">
+        <a href="/post/9952431938/tracing-objective-c-message-calls">Tracing objective-c message calls</a>
+      </li>
+    
+      <li class="post">
+        <a href="/post/6299270537/using-intents-for-sending-sms-messages-on-android-with">Using intents for sending sms messages on Android with Ti Mobile</a>
+      </li>
+    
+      <li class="post">
+        <a href="/post/5841602276/learning-javascript-used-to-mean-you-werent-a">Learning Javascript</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/omorandi">@omorandi</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'omorandi',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("olivier_morandi", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @olivier_morandi</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2011 - TiNinja -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
