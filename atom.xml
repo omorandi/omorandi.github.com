@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Titanium Ninja]]></title>
-  <link href="http://omorandi.github.com/atom.xml" rel="self"/>
-  <link href="http://omorandi.github.com/"/>
-  <updated>2011-10-30T16:18:46+01:00</updated>
-  <id>http://omorandi.github.com/</id>
+  <link href="http://titaniumninja.com/atom.xml" rel="self"/>
+  <link href="http://titaniumninja.com/"/>
+  <updated>2011-10-30T16:32:21+01:00</updated>
+  <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[FastDev for iOS: how it works]]></title>
-    <link href="http://omorandi.github.com/post/10559549700/fastdev-for-ios-how-it-works"/>
+    <link href="http://titaniumninja.com/post/10559549700/fastdev-for-ios-how-it-works"/>
     <updated>2011-09-23T00:00:00+02:00</updated>
-    <id>http://omorandi.github.com/post/10559549700/10559549700</id>
+    <id>http://titaniumninja.com/post/10559549700/10559549700</id>
     <content type="html"><![CDATA[<p>Some days ago I <a href="http://titaniumninja.com/post/10360108035/titanium-hack-fastdev-for-ios">published</a> a hack that allows patching the Titanium Mobile SDK for enabling fast on-device testing of iOS applications, without needing to rebuild, sign and redeploy them.</p>
 
 
@@ -78,9 +78,9 @@ This step generates the <code>build/iphone/Classes/ApplicationRouting.m</code> f
   
   <entry>
     <title type="html"><![CDATA[Titanium Hack: FastDev for iOS]]></title>
-    <link href="http://omorandi.github.com/post/10360108035/titanium-hack-fastdev-for-ios"/>
+    <link href="http://titaniumninja.com/post/10360108035/titanium-hack-fastdev-for-ios"/>
     <updated>2011-09-18T00:00:00+02:00</updated>
-    <id>http://omorandi.github.com/post/10360108035/10360108035</id>
+    <id>http://titaniumninja.com/post/10360108035/10360108035</id>
     <content type="html"><![CDATA[<p>Testing large Titanium Mobile applications on iOS devices can be cumbersome, since the build &amp; deploy process can take several minutes, even when the project is launched directly from XCode. Repeating the same process each time, for checking the effect of small modifications to the code is then quite annoying and time consuming.</p>
 
 
@@ -191,9 +191,9 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
   
   <entry>
     <title type="html"><![CDATA[Tracing objective-c message calls]]></title>
-    <link href="http://omorandi.github.com/post/9952431938/tracing-objective-c-message-calls"/>
+    <link href="http://titaniumninja.com/post/9952431938/tracing-objective-c-message-calls"/>
     <updated>2011-09-08T00:00:00+02:00</updated>
-    <id>http://omorandi.github.com/post/9952431938/9952431938</id>
+    <id>http://titaniumninja.com/post/9952431938/9952431938</id>
     <content type="html"><![CDATA[<p>Developing native modules for extending Titanium Mobile is fun, but at times it can be quite frustrating, because of the lack of adequate documentation. The module development guides available in the <a href="http://wiki.appcelerator.org/">Appcelerator documentation wiki</a> only show the tip of the iceberg, and while exposing functionality through simple proxy classes is quite straightforward, things can become quickly complicated when implementing ViewProxies, i.e. those that represent view objects to be shown onscreen.</p>
 
 
@@ -210,7 +210,7 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
 
 
 
-<p><center><img src="http://omorandi.github.com/images/posts/lr74na0S3G1qhcaa1.png"/></center></p>
+<p><center><img src="http://titaniumninja.com/images/posts/lr74na0S3G1qhcaa1.png"/></center></p>
 
 
 
@@ -346,9 +346,9 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
   
   <entry>
     <title type="html"><![CDATA[Using intents for sending sms messages on Android with Ti Mobile]]></title>
-    <link href="http://omorandi.github.com/post/6299270537/using-intents-for-sending-sms-messages-on-android-with"/>
+    <link href="http://titaniumninja.com/post/6299270537/using-intents-for-sending-sms-messages-on-android-with"/>
     <updated>2011-06-08T00:00:00+02:00</updated>
-    <id>http://omorandi.github.com/post/6299270537/6299270537</id>
+    <id>http://titaniumninja.com/post/6299270537/6299270537</id>
     <content type="html"><![CDATA[<p>Titanium mobile historically lacks of support for in-app sms sending facilities. Even the availability of the <a href="http://developer.apple.com/library/ios/#documentation/MessageUI/Reference/MFMessageComposeViewController_class/Reference/Reference.html">MFMessageComposeViewController</a> class since the release of iOS 4.X didn&#8217;t push Appcelerator guys to provide an appropriate mapping in the framework API. I personally tried to overcome the issue (at least on iOS) by creating a custom <a href="https://github.com/omorandi/TiSMSDialog">native module</a>, which had a quite good response from the community.</p>
 
 
@@ -485,9 +485,9 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
   
   <entry>
     <title type="html"><![CDATA[Learning Javascript]]></title>
-    <link href="http://omorandi.github.com/post/5841602276/learning-javascript-used-to-mean-you-werent-a"/>
+    <link href="http://titaniumninja.com/post/5841602276/learning-javascript-used-to-mean-you-werent-a"/>
     <updated>2011-05-25T00:00:00+02:00</updated>
-    <id>http://omorandi.github.com/post/5841602276/5841602276</id>
+    <id>http://titaniumninja.com/post/5841602276/5841602276</id>
     <content type="html"><![CDATA[<blockquote>Learning Javascript used to mean you weren&#8217;t a &#8220;serious software developer&#8221;. today, not learning it means the same thing.</blockquote>&#8212;<a href="http://twitter.com/monkchips">@monkchips</a>
 ]]></content>
   </entry>
