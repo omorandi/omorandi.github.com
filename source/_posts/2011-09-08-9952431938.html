@@ -1,0 +1,153 @@
+---
+layout: post
+title: Tracing objective-c message calls
+permalink: /post/9952431938/tracing-objective-c-message-calls
+---
+
+<p>Developing native modules for extending Titanium Mobile is fun, but at times it can be quite frustrating, because of the lack of adequate documentation. The module development guides available in the <a href="http://wiki.appcelerator.org/">Appcelerator documentation wiki</a> only show the tip of the iceberg, and while exposing functionality through simple proxy classes is quite straightforward, things can become quickly complicated when implementing ViewProxies, i.e. those that represent view objects to be shown onscreen.</p>
+
+
+
+<p>Actually, I&#8217;ve been mostly successful creating self contained native views, however problems started arising when I wanted to add Titanium intrinsic ViewProxies (e.g. Ti.UI.View) to my custom native views in iOS. In particular, something I&#8217;m still struggling to understand is the <em>exact</em> life cycle of TiViewProxy and their companion TiUIView objects, especially for what concerns the management of layout properties: since Titanium view objects are rendered lazily, there is a quite convoluted (at least at my eyes) mechanism in place for rearraging the layout of whole view hierarchies, which is managed by the TiViewProxy class.</p>
+
+
+
+<p>Since Titanium is an open source project, we can always take a look at how things are implemented. Indeed, I think that reading the code of the SDK is a good way to <em>really</em> understand how Titanium Mobile works under the hood, and I plan to share some of my findings in some future post. However, reading source code can be a highly time consuming practice. Also stepping through the code with the debugger can help in some cases, but the risk is to lose a higher level view.</p>
+
+
+
+<p>Since I wanted a more &#8220;dynamic&#8221; look at what happens to my viewproxy objects I thought that tracing the exact sequence of message calls involved between the creation and the onscreen rendering of a simple view could help. By googling around I&#8217;ve found some useful resources on the topic <a href="http://www.dribin.org/dave/blog/archives/2006/04/22/tracing_objc/">here</a> and in the <a href="http://developer.apple.com/library/mac/technotes/tn2124/_index.html#//apple_ref/doc/uid/DTS10003391-CH1-SECOBJECTIVEC">Mac OS X Debugging Magic</a> guide from Apple. It tuns out that this is a feature that can be enabled in any objective-c development environment (i.e. either for MacOS, or iOS targets) by setting the <code>NSObjCMessageLoggingEnabled</code> environment variable to <code>YES</code> in XCode before running the project. In XCode 4 this can be easily done through the <code>"Product-&gt;Edit Scheme"</code> menu, by selecting the <code>"Arguments"</code> tab and adding a new environment variable (under the <code>"Environmnet Variables"</code> section), as shown in the following picture:</p>
+
+
+
+<p><center><img src="/images/posts/lr74na0S3G1qhcaa1.png"/></center></p>
+
+
+
+<p>Then we can run the project, and all the message calls handled by objective-c objects (and classes, for static methods) are logged into a file named <code>/tmp/msgSends-&lt;pid&gt;</code>, where pid is the process ID.</p>
+
+
+
+<p>The result is quite overwhelming and looks like an immense sequence of lines like the followings:</p>
+
+
+
+<pre><code>+ NSObject NSObject initialize
+
++ NSRecursiveLock NSObject initialize
+
++ NSRecursiveLock NSObject new
+
++ NSRecursiveLock NSObject alloc
+
++ NSRecursiveLock NSRecursiveLock allocWithZone:
+
+- NSRecursiveLock NSRecursiveLock init
+
++ NSRecursiveLock NSObject new
+
++ NSRecursiveLock NSObject alloc
+
++ NSRecursiveLock NSRecursiveLock allocWithZone:
+
+- NSRecursiveLock NSRecursiveLock init
+
++ NSLock NSObject initialize
+
++ NSLock NSObject new
+
++ NSLock NSObject alloc
+
++ NSLock NSLock allocWithZone:
+
+- NSLock NSLock init
+
++ NSLock NSObject new
+
++ NSLock NSObject alloc
+
++ NSLock NSLock allocWithZone:
+
+- NSLock NSLock init
+
++ NSLock NSObject new
+
+[...]
+
+</code></pre>
+
+
+
+<p>Now, what remains to do is to filter this file, searching for instances of TiWindowProxy, TiViewProxy and TiUIView, for later inspection:</p>
+
+
+
+<pre><code>$ grep 'TiWindowProxy\|TiViewProxy\|TiUIView' /tmp/msgSends-31489 &gt; call-seq.txt
+
+</code></pre>
+
+
+
+<p>and the gems begin to surface:</p>
+
+
+
+<pre><code>+ TiViewProxy NSObject initialize
+
++ TiWindowProxy NSObject initialize
+
+- TiUIWindowProxy TiViewProxy init
+
+- TiUIWindowProxy TiWindowProxy _configure
+
+- TiViewProxy TiProxy _configure
+
+- TiUIWindowProxy TiViewProxy _initWithProperties:
+
+[…]
+
+- TiUIWindowProxy TiWindowProxy open:
+
+- TiUIWindowProxy TiWindowProxy open:
+
+- TiUIWindowProxy TiWindowProxy isModal:
+
+- TiUIWindowProxy TiWindowProxy argOrWindowProperty:args:
+
+- TiUIWindowProxy TiWindowProxy isFullscreen:
+
+- TiUIWindowProxy TiWindowProxy argOrWindowProperty:args:
+
+- TiUIWindowProxy TiWindowProxy openOnUIThread:
+
+- TiUIWindowProxy TiWindowProxy isRootViewAttached
+
+- TiUIWindowProxy TiViewProxy view
+
+- TiUIWindowProxy TiViewProxy viewWillAttach
+
+- TiUIWindowProxy TiWindowProxy newView
+
+- TiUIWindowProxy TiViewProxy appFrame
+
++ TiUIView NSObject initialize
+
+- TiUIWindow TiUIView touchesBegan:withEvent:
+
+- TiUIWindow TiUIView setFrame:
+
+- TiUIWindow TiUIView proxy
+
++ TiViewProxy NSObject class
+
+- TiUIWindow TiUIView setProxy:
+
+</code></pre>
+
+
+
+<p>I need to say that extracting useful information from this sequence is not that easy. However my plan is to follow it as a &#8220;map&#8221; while stepping through the code with the debugger.</p>
+
+
+
+<p>Unfortunately I have no results to show yet. Just stay tuned for a follow up post where I hope I&#8217;ll be able to layout at least a portion of the TiViewProxy object lifecycle.</p>

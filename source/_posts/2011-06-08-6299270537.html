@@ -1,0 +1,137 @@
+---
+layout: post
+title: Using intents for sending sms messages on Android with Ti Mobile
+permalink: /post/6299270537/using-intents-for-sending-sms-messages-on-android-with
+---
+
+<p>Titanium mobile historically lacks of support for in-app sms sending facilities. Even the availability of the <a href="http://developer.apple.com/library/ios/#documentation/MessageUI/Reference/MFMessageComposeViewController_class/Reference/Reference.html">MFMessageComposeViewController</a> class since the release of iOS 4.X didn&#8217;t push Appcelerator guys to provide an appropriate mapping in the framework API. I personally tried to overcome the issue (at least on iOS) by creating a custom <a href="https://github.com/omorandi/TiSMSDialog">native module</a>, which had a quite good response from the community.</p>
+
+
+
+
+
+
+
+<p>After releasing the iOS module I started investigating how I could provide a similar feature also for Android devices. It turns out that programmatically sending text messages on Android can be performed in a couple of ways:</p>
+
+
+
+
+
+
+
+<ol><li>by using the <a href="http://developer.android.com/reference/android/telephony/SmsManager.html">android.telephony.SmsManager</a> class </li>
+
+<li>by using the default SMS app through <a href="http://developer.android.com/reference/android/content/Intent.html">intents</a></li>
+
+</ol><p>Talking about native code, the simplest way for doing it is the latter, and all can be done with at most <a href="http://jtribe.blogspot.com/2008/12/sending-sms-using-android-intents.html">4 lines of code</a>. Since the Titanium SDK provides a direct mapping on native Android intents from release 1.5.0, implementing the same technique in a Ti Mobile project is quite straightforward:</p>
+
+
+
+
+
+
+
+<pre>    var intent = Ti.Android.createIntent({
+
+        action: Ti.Android.ACTION_VIEW,
+
+        type: 'vnd.android-dir/mms-sms'
+
+    });
+
+    intent.putExtra('sms_body', 'new message from me');
+
+    intent.putExtra('address', '123456789');
+
+    Ti.Android.currentActivity.startActivity(intent);
+
+</pre>
+
+
+
+<p>
+</p>
+
+
+
+<p>What this snippet of code does is simply to create a Ti.Android.Intent object with the appropriate properties and start an activity for it. As a result, the SMS sending activity registered in the system (i.e. probably that of the default SMS messaging app) gets started, pre-populated with the provided recipient (address) and message body (sms_body). That&#8217;s it.</p>
+
+
+
+
+
+
+
+<p>This solution is very simple and powerful, with the only drawback that there&#8217;s no possibility to get notified about the result of the operation, so we won&#8217;t know if the message has been actually sent or not. If in some cases this doesn&#8217;t represent a big issue, it&#8217;s highly probable that in your application you want to be notified if some problem occurred during the operation.</p>
+
+
+
+
+
+
+
+<p>At this point I haven&#8217;t found a reliable way for being notified about the result. Even using the startActivityForResult method of Ti.Android.currentActivity, instead of startActivity doesn&#8217;t help:</p>
+
+
+
+
+
+
+
+<pre>Ti.Android.currentActivity.startActivityForResult(intent, function(e) {
+
+    if (e.resultCode == Ti.Android.RESULT_OK) {
+
+      Ti.UI.createNotification({
+
+        message: "Message Sent!"
+
+      }).show();
+
+    } else if (e.resultCode == Ti.Android.RESULT_CANCELED) {
+
+      Ti.UI.createNotification({
+
+        message: "Message sending cancelled"
+
+      }).show();
+
+    }
+
+});
+
+</pre>
+
+
+
+<p>
+</p>
+
+
+
+<p>because the result value returned is always Ti.Android.RESULT_CANCELED. </p>
+
+
+
+
+
+
+
+<p><a href="https://gist.github.com/1013226">Here</a> is a complete example showing two alternative techniques for sending text messages through intents on Android with Ti Mobile.</p>
+
+
+
+
+
+
+
+<p>At this point, for Ti Mobile applications that need to be notified about the result of the operation, the only solution would be to create an Android module that wraps the <a href="http://developer.android.com/reference/android/telephony/SmsManager.html">android.telephony.SmsManager</a> class. </p>
+
+
+
+
+
+
+
+<p>I&#8217;m currently experimenting  around some basic code for such a module, so stay tuned ;-)</p>
