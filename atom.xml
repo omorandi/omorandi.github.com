@@ -4,7 +4,7 @@
   <title><![CDATA[Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2011-10-30T16:32:21+01:00</updated>
+  <updated>2011-11-02T00:52:20+01:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -12,6 +12,78 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Simulating slow network links on OSX]]></title>
+    <link href="http://titaniumninja.com/simulating-slow-network-links-on-os-x/"/>
+    <updated>2011-10-31T21:19:00+01:00</updated>
+    <id>http://titaniumninja.com/simulating-slow-network-links-on-os-x</id>
+    <content type="html"><![CDATA[<p>Testing mobile apps in the target platform simulator (either iOS or Android) can often be misleading, since the provided environment is an ideal one. The result is that an app working perfectly when executed in an emulated sandbox may expose unintended behaviors and perfomance when executed in open field on a real device. Moreover, not only physical resources, like processor performance and available memory are very different: also the characteristics of the  network connection available to a development machine (i.e. wifi attached to a DSL or better link) usually outperform those of the mobile Internet links available in the wild, usually ranging from no connection at all to different kinds of 3G connections.</p>
+
+<p>Several techniques do exist for simulating more realistic network characteristics when testing mobile apps on OS X, however most of them leverage the <em>traffic shaping</em> capabilities of the <code>ipfw</code> builtin firewall. In particular, they use the <code>ipfw pipe</code> command, which allows to define a pipe where all or part of the network traffic originating from, or directed to the host will be forced into.</p>
+
+<p>The characteristics of the pipe can be shaped according to specific requirements in terms of bandwidth, delay and packet-loss-ratio of the link that needs to be modeled, thus enabling a high flexibility. A pipe can be configured through the following command:</p>
+
+<pre><code>ipfw pipe &lt;num&gt; config bw &lt;bw&gt; delay &lt;d&gt; plr &lt;plr&gt;
+</code></pre>
+
+<p>where <code>num</code> is a number identifying the pipe, <code>bw</code> the desired bandwidth measured in <code>[K|M]{bit/s|Byte/s}</code>, <code>delay</code> is the propagation delay measured in milliseconds, and <code>plr</code> is the packet-loss-ratio, i.e. a number in the range [0..1].</p>
+
+<p>The following adds a firewall rule for the pipe:</p>
+
+<pre><code>ipfw add &lt;rule-num&gt; pipe &lt;num&gt; &lt;protocol&gt; from &lt;src&gt; to &lt;dst&gt;
+</code></pre>
+
+<p>The meaning of the command is the following:</p>
+
+<pre><code>* add rule with number rule-num
+* get all the packets containing protocol and directed from src to dst
+* flow them through the pipe identified by num
+</code></pre>
+
+<p>For example, modeling a GPRS link could be done with:</p>
+
+<pre><code>sudo ipfw pipe 1 config bw 56Kbit/s delay 200 plr 0.2
+sudo ipfw add 1 pipe 1 ip from any to any
+</code></pre>
+
+<p>which forces all the ip traffic through a 56Kbps link with a 200ms delay, which loses 20 packets out of 100 in average.</p>
+
+<p>It should be noted that while the rule is enforced, <strong>all</strong> the network traffic generated from or directed to the host machine is affected. Once the testing has been performed, the rule can be deleted with the command:</p>
+
+<pre><code>sudo ipfw delete 1
+</code></pre>
+
+<p>Not all network links have symmetric characteristics. In those cases it&#8217;s possible to model in a different way the uplink and the downlink sections with the following rules:</p>
+
+<pre><code>sudo ipfw pipe 1 config bw 780Kbps delay 100
+sudo ipfw pipe 2 config bw 330Kbps delay 100
+sudo ipfw add 1 pipe 1 in proto ip
+sudo ipfw add 1 pipe 2 out proto ip
+</code></pre>
+
+<p>More details can be found in the <a href="http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man8/ipfw.8.html">ipfw man page</a> and in the original <a href="http://info.iet.unipi.it/~luigi/dummynet/">Dummynet project</a> page.</p>
+
+<p>Using this technique from the command line, while effective, is probably not much practical. Moreover, figuring out realistic values for the required parameters can be a quite difficult task. A help in overcoming these issues comes from the developer tools available with XCode 4.2 on OS X Lion that, among others, provide a system preference pane called &#8220;Network Link Conditioner&#8221;, which allows to perform the same operations I listed before through a simple GUI, with a lot of predefined configuration templates.</p>
+
+<p>The tool can be found here:</p>
+
+<pre><code>/Developer/Applications/Utilities/Network\ Link\ Conditioner/Network Link Conditioner.prefPane
+</code></pre>
+
+<p>and once installed is made available in the System Preferences:</p>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/NetConditionerSysPref.png"></p>
+
+<p>The panel allows selecting a configuration from a list of presets, which comprise different kinds of mobile and &#8220;home&#8221; network links:</p>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/NetConditioner.png"></p>
+
+<p>The desired settings can be activated through the big switch present on the left of the panel and, in case the available presets are not sufficient, it&#8217;s possible to define custom configurations through the &#8220;Manage Profiles&#8221; button:</p>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/NetConditionerManage.png"></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[FastDev for iOS: how it works]]></title>
