@@ -234,6 +234,22 @@ sudo ipfw add 1 pipe 2 out proto ip
 </section>
 
 <section>
+  <h1>Coderwall</h1>
+  <p>
+  <script type="text/javascript">
+    function display_coderwall(args) {
+        var badges = args["data"]["badges"];
+        for ( var i = 0; i < badges.length; i++ ) {
+            document.write('<img src="'+ badges[i]["badge"] + '" width="80" height="80" />');
+        }
+    }
+  </script>
+  <script src="http://coderwall.com/omorandi.json?callback=display_coderwall"></script>
+  </p>
+  <p style="text-align: right;"><a href="http://coderwall.com/omorandi">Powered by coderwall.com</a></p>
+</section>
+
+<section>
   <h1>Github Repos</h1>
   <ul id="gh_repos">
     <li class="loading">Status updating...</li>
@@ -280,9 +296,6 @@ sudo ipfw add 1 pipe 2 out proto ip
 </section>
 
 
-
-
-
   
 </aside>
 
@@ -290,7 +303,7 @@ sudo ipfw add 1 pipe 2 out proto ip
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2011 - TiNinja -
+  Copyright &copy; 2012 - TiNinja -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
