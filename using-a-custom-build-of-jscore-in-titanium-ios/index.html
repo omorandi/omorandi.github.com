@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Learning Javascript - Titanium Ninja</title>
+  <title>Building Titanium Mobile JSCore from source - Titanium Ninja</title>
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Learning Javascript used to mean you weren&#8217;t a &#8220;serious software developer&#8221;. today, not learning it means the same thing.&#8212;@ &hellip;">
+  <meta name="description" content="As I already mentioned here, the Titanium Mobile framework on iOS is based on JavaScriptCore (i.e. the engine used by WebKit) for interpreting and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://titaniumninja.com/post/5841602276/learning-javascript-used-to-mean-you-werent-a">
+  <link rel="canonical" href="http://titaniumninja.com/using-a-custom-build-of-jscore-in-titanium-ios">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -79,7 +79,7 @@
   
   <header>
     
-      <h1 class="entry-title">Learning Javascript</h1>
+      <h1 class="entry-title">Building Titanium Mobile JSCore From Source</h1>
     
     
       <p class="meta">
@@ -90,14 +90,68 @@
 
   
 
-<time datetime="2011-05-25T00:00:00+02:00" pubdate>May 25<span>th</span>, 2011</time>
+<time datetime="2012-03-02T16:20:00+01:00" pubdate>Mar 2<span>nd</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><blockquote>Learning Javascript used to mean you weren&#8217;t a &#8220;serious software developer&#8221;. today, not learning it means the same thing.</blockquote>&#8212;<a href="http://twitter.com/monkchips">@monkchips</a>
+<div class="entry-content"><p>As I already mentioned <a href="http://titaniumninja.com/post/10559549700/fastdev-for-ios-how-it-works/">here</a>, the Titanium Mobile framework on iOS is based on <a href="http://trac.webkit.org/wiki/JavaScriptCore">JavaScriptCore</a> (i.e. the engine used by WebKit) for interpreting and executing your app&#8217;s JS files.</p>
+
+<p>Since part of my everyday work consists in hacking with the Ti SDK internals and building native modules it often happens that I need to track a bug or an issue down inside the core functions of the framework, and sometimes it would be useful to just take a look at the internal state of the JavaScript engine, in order to have a more detailed vision on where the problem at hand comes from.</p>
+
+<p>However, the JSCore library (<code>libTiCore.a</code>) shipped with the Titanium SDK, is built in <em>Release</em> mode, with debug symbols stripped out, so, while its method and function names appear in a debug stack trace, it&#8217;s nearly impossible to look at actual variable and class member values.</p>
+
+<p>Fortunately the source code of the library, customized by Appcelerator for integrating it with Titanium, is <a href="https://github.com/appcelerator/tijscore">available on github</a>, so we can create a custom build of it (e.g. a Debug version) and use it for our purposes.</p>
+
+<p>Historically, building the library from scratch has not been much simple, nor documented. Moreover, since the process relied on several shell scripts, it was quite easy to get lost (at least at a first glance). However, in the last few months both Stephen Tramer and Blain Hamon (who are the main contributors to that code base) made a great work in simplifying and linearizing the build process.</p>
+
+<p>This post aims at being just a quick tutorial for anyone needing to build <code>libTiCore</code> from scratch, so let&#8217;s dig in.</p>
+
+<h1>Building the libTiCore.a library</h1>
+
+<p>As usual, we can pull the git repo with:</p>
+
+<pre><code>git clone https://github.com/appcelerator/tijscore.git
+</code></pre>
+
+<p>Once downloaded, in the <code>tijscore</code> directory we&#8217;ll find a couple of scripts, namely <code>fixup.py</code> and <code>buildit.sh</code> and the <code>TiCore</code> directory, which contains the original files from the JSCore sources.</p>
+
+<p>In order to build the library we first need to run:</p>
+
+<pre><code>./fixup.py
+</code></pre>
+
+<p>This script will patch most of the files in the TiCore directory, by changing names of files and symbols according to the Titanium namespace <strong>Ti</strong>, which is the one expected by the Ti SDK source code.</p>
+
+<p>Then we can go with</p>
+
+<pre><code>./buildit.sh
+</code></pre>
+
+<p>This script will build the library and create a universal binary for the armv6, armv7 and i386 architectues. The build process is quite long (a bunch of minutes on my i7 MacBook Pro) and you&#8217;ll notice it&#8217;s completed when you hear the cooling fans of your computer stop whirling like crazy.</p>
+
+<p>The <code>buildit.sh</code> script also accepts a <em>VERSION</em> parameter that we can use for instructing it to build a debug version of the library:</p>
+
+<pre><code>./buildit.sh Debug
+</code></pre>
+
+<p>Once the build process is completed you&#8217;ll find the <code>libTiCore.a</code> library binary in the <code>TiCore/build</code> directory. The last required step is to install it in the appropriate folder of the Ti SDK:</p>
+
+<pre><code>cp TiCore/build/libTiCore.a $TITANIUM_DIR/mobilesdk/osx/$TITANIUM_VERSION/iphone/
+</code></pre>
+
+<p>where <code>$TITANIUM_DIR</code> and <code>$TITANIUM_VERSION</code> are respectively the root directory of your Ti SDK and the version you are currently using, e.g. <code>/Library/Application\ Support/Titanium</code> and 2.0.0.</p>
+
+<h1>A note on libTiCore.a versions vs Ti SDK versions</h1>
+
+<p>The Titanium Mobile SDK and the TiCore library are not really independent, so you must pay really big attention on which version of the library versus which version of the SDK you use, otherwise you will quite surely incur in linking errors when you build your titanium applications. For instance, this short tutorial is proved to work with version 16 (git hash ad8053020d) of the library,  which is used by the version 2.0.0 of the Ti SDK.</p>
+
+<p>For 1.8.X versions of the Ti SDK you should use version 15 of the library by checking out the git tag named <code>TiCore-15</code> in the <code>tijscore</code> repository, e.g.:</p>
+
+<pre><code>git checkout TiCore-15
+</code></pre>
 </div>
 
 
@@ -115,15 +169,21 @@
 
   
 
-<time datetime="2011-05-25T00:00:00+02:00" pubdate>May 25<span>th</span>, 2011</time>
+<time datetime="2012-03-02T16:20:00+01:00" pubdate>Mar 2<span>nd</span>, 2012</time>
       
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/jscore/'>JSCore</a>, <a class='category' href='/blog/categories/javasciptcore/'>JavasciptCore</a>, <a class='category' href='/blog/categories/titanium-mobile/'>Titanium Mobile</a>, <a class='category' href='/blog/categories/hacking/'>hacking</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/low-level/'>low-level</a>
+  
+</span>
 
 
     </p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/post/5841602276/learning-javascript-used-to-mean-you-werent-a" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/post/5841602276/learning-javascript-used-to-mean-you-werent-a" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/using-a-custom-build-of-jscore-in-titanium-ios/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/using-a-custom-build-of-jscore-in-titanium-ios/" >Tweet</a>
   
   
   
@@ -132,8 +192,8 @@
     
     <p class="meta">
       
+        <a class="basic-alignment left" href="/building-titanium-mobile-jscore-from-source/" title="Previous Post: Building Titanium Mobile JSCore from source">&laquo; Building Titanium Mobile JSCore from source</a>
       
-        <a class="basic-alignment right" href="/post/6299270537/using-intents-for-sending-sms-messages-on-android-with" title="next Post: Using intents for sending sms messages on Android with Ti Mobile">Using intents for sending sms messages on Android with Ti Mobile &raquo;</a>
       
     </p>
   </footer>
