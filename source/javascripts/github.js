@@ -7,6 +7,17 @@ var github = (function(){
     }
     t.innerHTML = fragment;
   }
+
+  function must_hide(repo, to_hide) {
+    for (var i = 0; i < to_hide.length; i++) {
+      console.log(to_hide[i]);
+      if (repo.name === to_hide[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   return {
     showRepos: function(options){
       $.ajax({
@@ -17,6 +28,7 @@ var github = (function(){
           var repos = [];
           for (var i = 0; i < data.repositories.length; i++){
             if (options.skip_forks && data.repositories[i].fork) { continue; }
+            if (must_hide(data.repositories[i], options.to_hide)) { continue; }
             repos.push(data.repositories[i]);
           }
           repos.sort(function(a, b) {
