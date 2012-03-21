@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: JavaScriptCore - Titanium Ninja</title>
+  <title>Bash one-liner for renaming high-res image files to @2x - Titanium Ninja</title>
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Category: JavaScriptCore">
+  <meta name="description" content="This tip may be useful to iOS developers when they&#8217;re given a bunch of high-resolution files and they need to rename them with the @2x filename &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://titaniumninja.comblog/categories/javascriptcore">
+  <link rel="canonical" href="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -75,36 +75,88 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: JavaScriptCore</h1>
+    
+      <h1 class="entry-title">Bash One-liner for Renaming High-res Image Files to @2x</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+  
+
+<time datetime="2012-03-21T13:54:00+01:00" pubdate>Mar 21<span>st</span>, 2012</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>This tip may be useful to iOS developers when they&#8217;re given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
 
-  
-  <h2>2012</h2>
+<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
 
-<article>
-  
-<h1><a href="/profiling-ti-mobile-apps-is-it-possible/">Profiling Ti Mobile apps: is it possible?</a></h1>
-<time datetime="2012-03-12T12:08:00+01:00" pubdate><span class='month'>Mar</span> <span class='day'>12</span> <span class='year'>2012</span></time>
+<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
+</code></pre>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/javascriptcore/'>JavaScriptCore</a>, <a class='category' href='/blog/categories/titanium-mobile/'>Titanium Mobile</a>, <a class='category' href='/blog/categories/ios/'>iOS</a>, <a class='category' href='/blog/categories/profiling/'>profiling</a></span>
-</footer>
-
-
-</article>
-
+<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">TiNinja</span></span>
+
+      
+
+
+
+
+  
+
+<time datetime="2012-03-21T13:54:00+01:00" pubdate>Mar 21<span>st</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/bash-/'>bash,</a>, <a class='category' href='/blog/categories/ios-/'>iOS,</a>, <a class='category' href='/blog/categories/trick/'>trick</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/profiling-ti-mobile-apps-is-it-possible/" title="Previous Post: Profiling Ti Mobile apps: is it possible?">&laquo; Profiling Ti Mobile apps: is it possible?</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -219,7 +271,10 @@
       var disqus_shortname = 'tininja';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x';
+        var disqus_url = 'http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: iOS, | Titanium Ninja]]></title>
+  <link href="http://titaniumninja.com/blog/categories/ios-/atom.xml" rel="self"/>
+  <link href="http://titaniumninja.com/"/>
+  <updated>2012-03-21T14:03:47+01:00</updated>
+  <id>http://titaniumninja.com/</id>
+  <author>
+    <name><![CDATA[TiNinja]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Bash one-liner for renaming high-res image files to @2x]]></title>
+    <link href="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/"/>
+    <updated>2012-03-21T13:54:00+01:00</updated>
+    <id>http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x</id>
+    <content type="html"><![CDATA[<p>This tip may be useful to iOS developers when they're given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
+
+<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
+
+<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
+</code></pre>
+
+<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
+]]></content>
+  </entry>
+  
+</feed>
