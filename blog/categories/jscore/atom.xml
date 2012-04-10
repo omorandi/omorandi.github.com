@@ -4,7 +4,7 @@
   <title><![CDATA[Category: JSCore | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/jscore/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2012-03-21T14:03:47+01:00</updated>
+  <updated>2012-04-10T15:35:40+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -63,7 +63,7 @@
 <pre><code>cp TiCore/build/libTiCore.a $TITANIUM_DIR/mobilesdk/osx/$TITANIUM_VERSION/iphone/
 </code></pre>
 
-<p>where <code>$TITANIUM_DIR</code> and <code>$TITANIUM_VERSION</code> are respectively the root directory of your Ti SDK and the version you are currently using, e.g. <code>/Library/Application\ Support/Titanium</code> and</p>
+<p>where <code>$TITANIUM_DIR</code> and <code>$TITANIUM_VERSION</code> are the root directory of your Ti SDK and the version you are currently using, e.g. <code>/Library/Application\ Support/Titanium</code> and <code>2.0.0</code> respectively.</p>
 
 <h2>A note on libTiCore.a versions vs Ti SDK versions</h2>
 
