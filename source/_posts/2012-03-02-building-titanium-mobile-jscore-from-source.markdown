@@ -46,7 +46,7 @@ Once the build process is completed you'll find the `libTiCore.a` library binar
 
 	cp TiCore/build/libTiCore.a $TITANIUM_DIR/mobilesdk/osx/$TITANIUM_VERSION/iphone/
 	
-where `$TITANIUM_DIR` and `$TITANIUM_VERSION` are respectively the root directory of your Ti SDK and the version you are currently using, e.g. `/Library/Application\ Support/Titanium` and 
+where `$TITANIUM_DIR` and `$TITANIUM_VERSION` are the root directory of your Ti SDK and the version you are currently using, e.g. `/Library/Application\ Support/Titanium` and `2.0.0` respectively.
 
 ## A note on libTiCore.a versions vs Ti SDK versions
 The Titanium Mobile SDK and the TiCore library are not really independent, so you must pay really big attention on which version of the library versus which version of the SDK you use, otherwise you will quite surely incur in linking errors when you build your titanium applications. For instance, this short tutorial is proved to work with version 16 (git hash ad8053020d) of the library,  which is used by the version 2.0.0 of the Ti SDK.
