@@ -14,8 +14,10 @@ During most of my career I’ve been a researcher in the field of network proces
 
 When I left my work at the university I had the opportunity to reinvent myself working on mobile development projects, designing and developing mobile client-server applications and creating web services. My first projects were cross-platform (iOS and Android) and the timeframe was too short to become proficient with the two native SDKs, so I opted for Titanium Mobile.  I immediately liked Appcelerator’s approach to portability, based on a single language and a common API that’s capable of exposing the characteristics of the specific target platform… And I definitely enjoyed learning JS.
 
-Fast forward to now, I’m involved in several Titanium Mobile projects either developing and maintaining mobile apps, either hacking with the framework, extending it and creating native modules (mainly on iOS). I am now also a <a href="/tcad">Titanium Certified App Developer</a> (TCAD).
+Fast forward to now, I’m involved in several Titanium Mobile projects either developing and maintaining mobile apps, either hacking with the framework, extending it and creating native modules (mainly on iOS). I am now also a <a href="/tcad">Titanium Certified App Developer</a> (TCAD) and <a href="/tcmd">Titanium Certified Mobile Developer</a> (TCMD).
 
 If you need someone for developing/refactoring a Titanium Mobile app, or for creating a custom native extension don’t hesitate to contact me.
 
 <a href="http://it.linkedin.com/in/oliviermorandi">![linkedIn](/images/linkedin.png)</a> <a href="http://twitter.com/olivier_morandi">![twitter](/images/twitter.png)</a> <a href="https://github.com/omorandi">![github](/images/github.png)</a> 
+
+<a href= "/tcad"><img src="/images/tcad_tab_small.png"/></a> <a href="/tcmd"><img src="/images/tcmd_tab_small.png"/></a>
