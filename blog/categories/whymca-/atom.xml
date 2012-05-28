@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: iOS, | Titanium Ninja]]></title>
-  <link href="http://titaniumninja.com/blog/categories/ios-/atom.xml" rel="self"/>
+  <title><![CDATA[Category: whymca, | Titanium Ninja]]></title>
+  <link href="http://titaniumninja.com/blog/categories/whymca-/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
   <updated>2012-05-28T13:41:36+02:00</updated>
   <id>http://titaniumninja.com/</id>
@@ -76,22 +76,6 @@
 
 <div style="width:425px" id="__ss_13102557"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance">Titanium Mobile: flexibility vs. performance</a></strong><object id="__sse13102557" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" /><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="wmode" value="transparent"/><embed name="__sse13102557" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" width="425" height="355"></embed></object><div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/omorandi">omorandi</a>.</div></div>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Bash one-liner for renaming high-res image files to @2x]]></title>
-    <link href="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/"/>
-    <updated>2012-03-21T13:54:00+01:00</updated>
-    <id>http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x</id>
-    <content type="html"><![CDATA[<p>This tip may be useful to iOS developers when they're given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
-
-<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
-
-<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
-</code></pre>
-
-<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
 ]]></content>
   </entry>
   

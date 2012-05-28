@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Titanium Mobile: Flexibility vs. Performance - Titanium Ninja</title>
+  <meta name="author" content="TiNinja">
+
+  
+  <meta name="description" content="Last week I had the pleasure to give a talk at the WhyMCA Italian Mobile Developer Conference. Title of the talk is &#8220;Titanium Mobile: &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://titaniumninja.com/titanium-mobile-flexibility-vs-performance">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Alike+Angular' rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-8810685-2']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Titanium Ninja</a></h1>
+  
+    <h2>App and module development with Titanium Mobile</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:titaniumninja.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">whoami</a></li>	
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Titanium Mobile: Flexibility vs. Performance</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+  
+
+<time datetime="2012-05-28T01:14:00+02:00" pubdate>May 28<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Last week I had the pleasure to give a talk at the <a href="http://www.whymca.org/">WhyMCA Italian Mobile Developer Conference</a>. Title of the talk is <a href="http://www.whymca.org/intervento/titanium-mobile-flexibility-vs-performance">&#8220;Titanium Mobile: Flexibility vs. Performance&#8221;</a>. Despite being structured as a quite technical speech, at it&#8217;s heart I consider it a &#8220;philosophical&#8221; one, since its message is highly related to why I think the approach to cross platform mobile development and code portability provided by Titanium is, albeit always perfrectible, the right one. In this post I&#8217;d like to expand a bit on the motivations behind this line of thinking.</p>
+
+<p>Titanium isn&#8217;t a write-once-run-everywhere platform. As Appcelerator&#8217;s guys use to say, its aim is to be a write-once-adapt-everywhere tool, since, while using a common high level language and API, it enables the exploitment of platform specific features when needed. This philosofy is clearly visible in the API, as we have entire sub-namespaces dedicated to either iOS, or Android. This allows adapting our mobile applications to the platforms where they&#8217;re executed, thus avoiding a write once, suck everywhere effect. Moreover, the possibility to develop custom native extensions to the framework opens  up a wide range of development scenarios, ideally allowing us to create user experiences that are practically undistinguishable from those of applications developed with native SDKs.</p>
+
+<p>My point of view on this kind of approach to cross platform portability has its roots in the work I took over during 5 years as a researcher, where I explored the boundaries of flexibility (in terms of ease of development and cross platform portability) and performance in the field of network processing architectures. If you really have nothing better to do, you can check out my <a href="/doc/2009-PhD-MorandiOlivier.pdf">PhD dissertation thesis</a> dating back to the beginning of 2009 for additional details.</p>
+
+<p>While at a completely different scale, in mobile application development we face challenges that are very similar to those that passionated me during my research:</p>
+
+<ul>
+<li>heterogeneous and incompatible mobile device platforms and OSs</li>
+<li>while native capabilities are quite homogeneous across platforms, UIs are not</li>
+<li>each platform must be programmed with it&#8217;s own SDK, each one based on a different language (e.g. Java for Android, objective-c for iOS, and so on) - code reuse and portability is impossible</li>
+<li>we have stringent constraints on the User Experience: apps with a poor UX fail to gain wide adoption</li>
+</ul>
+
+
+<p>In this scenario, the approach proposed by Titanium is very interesting:</p>
+
+<ul>
+<li>It&#8217;s based on a high level language that abstracts away the different programming models of the target platforms</li>
+<li>It provides a very wide and flexible <strong>high level</strong> API (in contrast to other technologies, like the very recent <a href="http://www.rubymotion.com/">RubyMotion</a>, which provides just Ruby wrappers around the classes of the iOS Cocoa Touch framework)</li>
+<li>It&#8217;s extensible through natively coded modules for leveraging native features of the target platform</li>
+</ul>
+
+
+<p>Titanium applications are native by all means anyway, since even if written in JavaScript, they directly rely on native functionality. However, as its API is very general and flexible, allowing to adapt the same macro components to very disparate uses, in some cases this may cause slow downs and not so slick user experiences. It&#8217;s quite simple to explain why this happens: when the code implementing an UI component (e.g. a TableView), must be able to adapt to every possible use, we are introducing some amount of overhead, with the result of trading off performance in favor of flexibility.</p>
+
+<p>So, in my presentation, I tried to propose two main lines of thought based on the realistic scenario of performance problems related to the creation and scrolling of a table view. The first line of thought tries to make the point that when we face a performance problem, which in mobile development is frequently a UX problem, we need to go to the root of the issue, by understanding what is causing it. This means the following things:</p>
+
+<ul>
+<li>we need to know how the tools we&#8217;re using actually work under the hood: Titanium doesn&#8217;t use the same JS engine on both iOS and Android. In particular, JavaScriptCore and V8 are very different implementations of JS, the latter being an optimizing JIT compiler, while the former is actually a bytecode interpreter, as JIT compilations is forbidden by iOS</li>
+<li>As a corollary, relying on some old school micro-optimizations, like caching the length of an array while iterating over it in a for loop, may be actually useless, since if the body of the loop is &#8220;fat&#8221; enough, I&#8217;m quite sure you&#8217;re not wasting time in that check. Moreover, if that loop is &#8220;hot&#8221; enough, V8 will automatically optimize it anyway, by hoisting the access to the array length outside of the loop (check out this video from JSConf 2012: <a href="http://blip.tv/jsconf/jsconf2012-vyacheslav-egorov-6141593">&#8220;One day of life in V8&#8221; by Vyacheslav Egorov</a>)</li>
+<li>We need to <strong>measure</strong>, at first even just in a rough way, in order to find where we are loosing time</li>
+</ul>
+
+
+<p>This last point raises an alert on the lack of accurate profiling tools that we can productively use for measuring the actual performance of our code. My extensions to Titanium for leveraging the <a href="/profiling-ti-mobile-apps-is-it-possible/">JavaScriptCore profiler</a> are still work in progress, and I&#8217;ll hopefully post an update on that story soon.</p>
+
+<p>The other line of thought I pursued, is related to what we can do for increasing the scrolling performance of our table view component. Table views are a critical component in most applications, and those presenting complex row layouts can result in choppy scrolling animations for several reasons. Complex row layouts are actually a problem also when developed natively, however, in Titanium we have much less opportunities for optimizations, as we obviously need to rely on the provided API implementation, which is crafted in a way that enhances flexibility and ease of use for the developer.</p>
+
+<p>In my presentation I propose a short investigation on the reasons that underly a lack of scrolling performance, by using the Instruments Core Animation profiling tools provided with Xcode. Scrolling issues are usually caused by transparent, or non-opaque views, like labels, which make the rendering engine do extra work for computing how superimposed views blend together. Another major pain point (often more important than the former) is represented by views with rounded corners, which need more iterations to be rendered. In this case, a very simple solution is to use image masks: a semi transparent image to be superimposed to the view that needs rounded corners. If the view is an ImageView, the <a href="http://developer.appcelerator.com/apidoc/mobile/latest/Titanium.UI.MaskedImage-object"><code>Ti.UI.MaskedImage</code></a> component does just the right job.</p>
+
+<p>There&#8217;s an interesting session from Apple&#8217;s WWDC 2010 where these kinds of performance issues are analyzed. The talk is titled &#8220;Performance Optimization on iPhone OS&#8221;. If you are registered as an Apple developer you can download the video from <a href="https://developer.apple.com/videos/wwdc/2010/">https://developer.apple.com/videos/wwdc/2010/</a>.</p>
+
+<p>So we come to the center point of my reasoning. If we are not able to fulfill our performance goals by tweaking our use of the standard API, Titanium allows us to implement our performance-critical components as native modules. In other words, we can trade flexibility for gaining performance. For doing so, we must give up some amount of generality and the possibility to reuse our code in other applications by implementing an optimized component that exposes an application-specific semantic: both the API and the implementation of the module will be tailored on the peculiar application and it&#8217;s performance requirements.</p>
+
+<p>Following the table view example, on iOS this translates into having tableview rows with a hardcoded layout, possibly with sub-views whose <code>opaque</code> property is set to true on iOS, and so on. Would we still be dissatisfied with the result, we can always rely on the concept of fast-cells, which  are tableview cells actually composed by a single view, where all information to be shown is laid out by using low level CoreGraphics drawing primitives. Check out the <a href="http://iosboilerplate.com/">iOS Boilerplate project</a> and <a href="http://developer.apple.com/library/ios/#samplecode/TableViewSuite/Introduction/Intro.html#//apple_ref/doc/uid/DTS40007318">this coding example from Apple</a> for additional information.</p>
+
+<p>Summarizing, what does all this mean? That Titanium Mobile is a tool allowing us to create very complex <strong>cross platform</strong> mobile applications in a fraction of the time needed to make parallel developments using native SDKs. The possibility to extend the framework with native modules opens up a wide range of development scenarios, enabling both the reuse of existing native libraries, and the optimization of performance-critical portions of the app, when needed.</p>
+
+<p>Is it a panacea? Not really, IMHO. I use Titanium since version 0.8, and despite a visible effort in making it better release after release, even now that version 2.0 is out I think it&#8217;s still a bit immature. I still see it somewhat a platform made for hackers, rather than for developers, as without a deep knowledge of its internals it&#8217;s often impractical to overcome even trivial issues like a failed build. A quick look at most of the questions on the Q&amp;A forum will suffice to support my point of view on this.</p>
+
+<p>That said, even taking into account the problems, I think Titanium is the right tool every time we are dealing with an application that needs to support both iOS and Android platforms, whose value resides in a rather complex business logic, instead of just in the presentation layer. In these cases, we don&#8217;t want to develop, test, debug, and maintain different implementations of the same solution across different platforms. Moreover, being based on a high level abstraction layer (JS language + very flexible API), Titanium allows very quick iterations in the solution space, which is an invaluable feature when we are trying to validate business ideas against unkown markets.</p>
+
+<p>Finally, here you find the slides of my presentation:</p>
+
+<div style="width:425px" id="__ss_13102557"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance">Titanium Mobile: flexibility vs. performance</a></strong><object id="__sse13102557" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" /><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="wmode" value="transparent"/><embed name="__sse13102557" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" width="425" height="355"></embed></object><div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/omorandi">omorandi</a>.</div></div>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">TiNinja</span></span>
+
+      
+
+
+
+
+  
+
+<time datetime="2012-05-28T01:14:00+02:00" pubdate>May 28<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ios-/'>iOS,</a>, <a class='category' href='/blog/categories/optimization-/'>optimization,</a>, <a class='category' href='/blog/categories/performance-/'>performance,</a>, <a class='category' href='/blog/categories/presentation/'>presentation</a>, <a class='category' href='/blog/categories/whymca-/'>whymca,</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/titanium-mobile-flexibility-vs-performance/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/titanium-mobile-flexibility-vs-performance/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/" title="Previous Post: Bash one-liner for renaming high-res image files to @2x">&laquo; Bash one-liner for renaming high-res image files to @2x</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/titanium-mobile-flexibility-vs-performance/">Titanium Mobile: Flexibility vs. Performance</a>
+      </li>
+    
+      <li class="post">
+        <a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash one-liner for renaming high-res image files to @2x</a>
+      </li>
+    
+      <li class="post">
+        <a href="/profiling-ti-mobile-apps-is-it-possible/">Profiling Ti Mobile apps: is it possible?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/building-titanium-mobile-jscore-from-source/">Building Titanium Mobile JSCore from source</a>
+      </li>
+    
+      <li class="post">
+        <a href="/simulating-slow-network-links-on-os-x/">Simulating slow network links on OSX</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <a href="/tcmd"><img src="/images/tcmd_color.png" alt="tcmd-logo" /></a>
+</section>
+<section>
+  <h1>Coderwall</h1>
+  <p>
+  <script type="text/javascript">
+    function display_coderwall(args) {
+        var badges = args["data"]["badges"];
+        for ( var i = 0; i < badges.length; i++ ) {
+            document.write('<img src="'+ badges[i]["badge"] + '" width="80" height="80" />');
+        }
+    }
+  </script>
+  <script src="http://coderwall.com/omorandi.json?callback=display_coderwall"></script>
+  </p>
+  <p style="text-align: right;"><a href="http://coderwall.com/omorandi">Powered by coderwall.com</a></p>
+</section>
+
+<section>
+  <h1>Github Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/omorandi">@omorandi</a> on Github
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'omorandi',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos',
+            to_hide: ['omorandi.github.com', 'TiImageSlices']
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("olivier_morandi", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @olivier_morandi</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - TiNinja -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'tininja';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://titaniumninja.com/titanium-mobile-flexibility-vs-performance';
+        var disqus_url = 'http://titaniumninja.com/titanium-mobile-flexibility-vs-performance';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
