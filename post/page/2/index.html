@@ -9,7 +9,7 @@
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Testing mobile apps in the target platform simulator (either iOS or Android) can often be misleading, since the provided environment is an ideal one &hellip;">
+  <meta name="description" content="As I already mentioned here, the Titanium Mobile framework on iOS is based on JavaScriptCore (i.e. the engine used by WebKit) for interpreting and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -76,6 +76,91 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/building-titanium-mobile-jscore-from-source/">Building Titanium Mobile JSCore From Source</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+  
+
+<time datetime="2012-03-02T16:20:00+01:00" pubdate>Mar 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>As I already mentioned <a href="http://titaniumninja.com/post/10559549700/fastdev-for-ios-how-it-works/">here</a>, the Titanium Mobile framework on iOS is based on <a href="http://trac.webkit.org/wiki/JavaScriptCore">JavaScriptCore</a> (i.e. the engine used by WebKit) for interpreting and executing your app&#8217;s JS files.</p>
+
+<p>Since part of my everyday work consists in hacking with the Ti SDK internals and building native modules it often happens that I need to track a bug or an issue down inside the core functions of the framework, and sometimes it would be useful to just take a look at the internal state of the JavaScript engine, in order to have a more detailed vision on where the problem at hand comes from.</p>
+
+<p>However, the JSCore library (<code>libTiCore.a</code>) shipped with the Titanium SDK, is built in <em>Release</em> mode, with debug symbols stripped out, so, while its method and function names appear in a debug stack trace, it&#8217;s nearly impossible to look at actual variable and class member values.</p>
+
+<p>Fortunately the source code of the library, customized by Appcelerator for integrating it with Titanium, is <a href="https://github.com/appcelerator/tijscore">available on github</a>, so we can create a custom build of it (e.g. a Debug version) and use it for our purposes.</p>
+
+<p>Historically, building the library from scratch has not been much simple, nor documented. Moreover, since the process relied on several shell scripts, it was quite easy to get lost (at least at a first glance). However, in the last few months both Stephen Tramer and Blain Hamon (who are the main contributors to that code base) made a great work in simplifying and linearizing the build process.</p>
+
+<p>This post aims at being just a quick tutorial for anyone needing to build <code>libTiCore</code> from scratch, so let&#8217;s dig in.</p>
+
+<h2>Building the libTiCore.a library</h2>
+
+<p>As usual, we can pull the git repo with:</p>
+
+<pre><code>git clone https://github.com/appcelerator/tijscore.git
+</code></pre>
+
+<p>Once downloaded, in the <code>tijscore</code> directory we&#8217;ll find a couple of scripts, namely <code>fixup.py</code> and <code>buildit.sh</code> and the <code>TiCore</code> directory, which contains the original files from the JSCore sources.</p>
+
+<p>In order to build the library we first need to run:</p>
+
+<pre><code>./fixup.py
+</code></pre>
+
+<p>This script will patch most of the files in the TiCore directory, by changing names of files and symbols according to the Titanium namespace <strong>Ti</strong>, which is the one expected by the Ti SDK source code.</p>
+
+<p>Then we can go with</p>
+
+<pre><code>./buildit.sh
+</code></pre>
+
+<p>This script will build the library and create a universal binary for the armv6, armv7 and i386 architectues. The build process is quite long (a bunch of minutes on my i7 MacBook Pro) and you&#8217;ll notice it&#8217;s completed when you hear the cooling fans of your computer stop whirling like crazy.</p>
+
+<p>The <code>buildit.sh</code> script also accepts a <em>CONFIG</em> parameter that we can use for instructing it to build a debug version of the library:</p>
+
+<pre><code>./buildit.sh Debug
+</code></pre>
+
+<p>Once the build process is completed you&#8217;ll find the <code>libTiCore.a</code> library binary in the <code>TiCore/build</code> directory. The last required step is to install it in the appropriate folder of the Ti SDK:</p>
+
+<pre><code>cp TiCore/build/libTiCore.a $TITANIUM_DIR/mobilesdk/osx/$TITANIUM_VERSION/iphone/
+</code></pre>
+
+<p>where <code>$TITANIUM_DIR</code> and <code>$TITANIUM_VERSION</code> are the root directory of your Ti SDK and the version you are currently using, e.g. <code>/Library/Application\ Support/Titanium</code> and <code>2.0.0</code> respectively.</p>
+
+<h2>A note on libTiCore.a versions vs Ti SDK versions</h2>
+
+<p>The Titanium Mobile SDK and the TiCore library are not really independent, so you must pay really big attention on which version of the library versus which version of the SDK you use, otherwise you will quite surely incur in linking errors when you build your titanium applications. For instance, this short tutorial is proved to work with version 16 (git hash ad8053020d) of the library,  which is used by the version 2.0.0 of the Ti SDK.</p>
+
+<p>For 1.8.X versions of the Ti SDK you should use version 15 of the library by checking out the git tag named <code>TiCore-15</code> in the <code>tijscore</code> repository, e.g.:</p>
+
+<pre><code>git checkout TiCore-15
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -568,167 +653,6 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/post/6299270537/using-intents-for-sending-sms-messages-on-android-with">Using Intents for Sending Sms Messages on Android With Ti Mobile</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-  
-
-<time datetime="2011-06-08T00:00:00+02:00" pubdate>Jun 8<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Titanium mobile historically lacks of support for in-app sms sending facilities. Even the availability of the <a href="http://developer.apple.com/library/ios/#documentation/MessageUI/Reference/MFMessageComposeViewController_class/Reference/Reference.html">MFMessageComposeViewController</a> class since the release of iOS 4.X didn&#8217;t push Appcelerator guys to provide an appropriate mapping in the framework API. I personally tried to overcome the issue (at least on iOS) by creating a custom <a href="https://github.com/omorandi/TiSMSDialog">native module</a>, which had a quite good response from the community.</p>
-
-
-
-
-
-
-
-<p>After releasing the iOS module I started investigating how I could provide a similar feature also for Android devices. It turns out that programmatically sending text messages on Android can be performed in a couple of ways:</p>
-
-
-
-
-
-
-
-<ol><li>by using the <a href="http://developer.android.com/reference/android/telephony/SmsManager.html">android.telephony.SmsManager</a> class </li>
-
-<li>by using the default SMS app through <a href="http://developer.android.com/reference/android/content/Intent.html">intents</a></li>
-
-</ol><p>Talking about native code, the simplest way for doing it is the latter, and all can be done with at most <a href="http://jtribe.blogspot.com/2008/12/sending-sms-using-android-intents.html">4 lines of code</a>. Since the Titanium SDK provides a direct mapping on native Android intents from release 1.5.0, implementing the same technique in a Ti Mobile project is quite straightforward:</p>
-
-
-
-
-
-
-
-<pre>    var intent = Ti.Android.createIntent({
-
-        action: Ti.Android.ACTION_VIEW,
-
-        type: 'vnd.android-dir/mms-sms'
-
-    });
-
-    intent.putExtra('sms_body', 'new message from me');
-
-    intent.putExtra('address', '123456789');
-
-    Ti.Android.currentActivity.startActivity(intent);
-
-</pre>
-
-
-
-<p>
-</p>
-
-
-
-<p>What this snippet of code does is simply to create a Ti.Android.Intent object with the appropriate properties and start an activity for it. As a result, the SMS sending activity registered in the system (i.e. probably that of the default SMS messaging app) gets started, pre-populated with the provided recipient (address) and message body (sms_body). That&#8217;s it.</p>
-
-
-
-
-
-
-
-<p>This solution is very simple and powerful, with the only drawback that there&#8217;s no possibility to get notified about the result of the operation, so we won&#8217;t know if the message has been actually sent or not. If in some cases this doesn&#8217;t represent a big issue, it&#8217;s highly probable that in your application you want to be notified if some problem occurred during the operation.</p>
-
-
-
-
-
-
-
-<p>At this point I haven&#8217;t found a reliable way for being notified about the result. Even using the startActivityForResult method of Ti.Android.currentActivity, instead of startActivity doesn&#8217;t help:</p>
-
-
-
-
-
-
-
-<pre>Ti.Android.currentActivity.startActivityForResult(intent, function(e) {
-
-    if (e.resultCode == Ti.Android.RESULT_OK) {
-
-      Ti.UI.createNotification({
-
-        message: "Message Sent!"
-
-      }).show();
-
-    } else if (e.resultCode == Ti.Android.RESULT_CANCELED) {
-
-      Ti.UI.createNotification({
-
-        message: "Message sending cancelled"
-
-      }).show();
-
-    }
-
-});
-
-</pre>
-
-
-
-<p>
-</p>
-
-
-
-<p>because the result value returned is always Ti.Android.RESULT_CANCELED. </p>
-
-
-
-
-
-
-
-<p><a href="https://gist.github.com/1013226">Here</a> is a complete example showing two alternative techniques for sending text messages through intents on Android with Ti Mobile.</p>
-
-
-
-
-
-
-
-<p>At this point, for Ti Mobile applications that need to be notified about the result of the operation, the only solution would be to create an Android module that wraps the <a href="http://developer.android.com/reference/android/telephony/SmsManager.html">android.telephony.SmsManager</a> class. </p>
-
-
-
-
-
-
-
-<p>I&#8217;m currently experimenting  around some basic code for such a module, so stay tuned ;-)</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/post/page/3/">&larr; Older</a>
@@ -746,6 +670,10 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/introducing-tiprofiler-for-ios/">Introducing TiProfiler for iOS</a>
+      </li>
+    
+      <li class="post">
         <a href="/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/">Testing Titanium Mobile applications with Jasmine and Sinon (part I)</a>
       </li>
     
@@ -759,10 +687,6 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
     
       <li class="post">
         <a href="/profiling-ti-mobile-apps-is-it-possible/">Profiling Ti Mobile apps: is it possible?</a>
-      </li>
-    
-      <li class="post">
-        <a href="/building-titanium-mobile-jscore-from-source/">Building Titanium Mobile JSCore from source</a>
       </li>
     
   </ul>
