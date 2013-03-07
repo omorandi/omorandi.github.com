@@ -9,7 +9,7 @@
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Titanium mobile historically lacks of support for in-app sms sending facilities. Even the availability of the MFMessageComposeViewController class &hellip;">
+  <meta name="description" content="Developing native modules for extending Titanium Mobile is fun, but at times it can be quite frustrating, because of the lack of adequate &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,18 +18,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://titaniumninja.com/post/page/3">
+  <link rel="canonical" href="http://titaniumninja.com/post/page/3/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href='http://fonts.googleapis.com/css?family=Alike+Angular' rel='stylesheet' type='text/css'>
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -59,12 +59,14 @@
   <li><a href="http://feeds.feedburner.com/TitaniumNinja" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
+  
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
     <input type="hidden" name="q" value="site:titaniumninja.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
+  
 <ul class="main-navigation">
   <li><a href="/">Blog</a></li>
   <li><a href="/whoami/">whoami</a></li>	
@@ -82,6 +84,188 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/post/9952431938/tracing-objective-c-message-calls">Tracing Objective-c Message Calls</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-08T00:00:00+02:00" pubdate data-updated="true">Sep 8<span>th</span>, 2011</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Developing native modules for extending Titanium Mobile is fun, but at times it can be quite frustrating, because of the lack of adequate documentation. The module development guides available in the <a href="http://wiki.appcelerator.org/">Appcelerator documentation wiki</a> only show the tip of the iceberg, and while exposing functionality through simple proxy classes is quite straightforward, things can become quickly complicated when implementing ViewProxies, i.e. those that represent view objects to be shown onscreen.</p>
+
+
+
+<p>Actually, I&#8217;ve been mostly successful creating self contained native views, however problems started arising when I wanted to add Titanium intrinsic ViewProxies (e.g. Ti.UI.View) to my custom native views in iOS. In particular, something I&#8217;m still struggling to understand is the <em>exact</em> life cycle of TiViewProxy and their companion TiUIView objects, especially for what concerns the management of layout properties: since Titanium view objects are rendered lazily, there is a quite convoluted (at least at my eyes) mechanism in place for rearraging the layout of whole view hierarchies, which is managed by the TiViewProxy class.</p>
+
+
+
+<p>Since Titanium is an open source project, we can always take a look at how things are implemented. Indeed, I think that reading the code of the SDK is a good way to <em>really</em> understand how Titanium Mobile works under the hood, and I plan to share some of my findings in some future post. However, reading source code can be a highly time consuming practice. Also stepping through the code with the debugger can help in some cases, but the risk is to lose a higher level view.</p>
+
+
+
+<p>Since I wanted a more &#8220;dynamic&#8221; look at what happens to my viewproxy objects I thought that tracing the exact sequence of message calls involved between the creation and the onscreen rendering of a simple view could help. By googling around I&#8217;ve found some useful resources on the topic <a href="http://www.dribin.org/dave/blog/archives/2006/04/22/tracing_objc/">here</a> and in the <a href="http://developer.apple.com/library/mac/technotes/tn2124/_index.html#//apple_ref/doc/uid/DTS10003391-CH1-SECOBJECTIVEC">Mac OS X Debugging Magic</a> guide from Apple. It tuns out that this is a feature that can be enabled in any objective-c development environment (i.e. either for MacOS, or iOS targets) by setting the <code>NSObjCMessageLoggingEnabled</code> environment variable to <code>YES</code> in XCode before running the project. In XCode 4 this can be easily done through the <code>"Product-&gt;Edit Scheme"</code> menu, by selecting the <code>"Arguments"</code> tab and adding a new environment variable (under the <code>"Environmnet Variables"</code> section), as shown in the following picture:</p>
+
+
+
+<p><center><img src="/images/posts/lr74na0S3G1qhcaa1.png"/></center></p>
+
+
+
+<p>Then we can run the project, and all the message calls handled by objective-c objects (and classes, for static methods) are logged into a file named <code>/tmp/msgSends-&lt;pid&gt;</code>, where pid is the process ID.</p>
+
+
+
+<p>The result is quite overwhelming and looks like an immense sequence of lines like the followings:</p>
+
+
+
+<pre><code>+ NSObject NSObject initialize
+
++ NSRecursiveLock NSObject initialize
+
++ NSRecursiveLock NSObject new
+
++ NSRecursiveLock NSObject alloc
+
++ NSRecursiveLock NSRecursiveLock allocWithZone:
+
+- NSRecursiveLock NSRecursiveLock init
+
++ NSRecursiveLock NSObject new
+
++ NSRecursiveLock NSObject alloc
+
++ NSRecursiveLock NSRecursiveLock allocWithZone:
+
+- NSRecursiveLock NSRecursiveLock init
+
++ NSLock NSObject initialize
+
++ NSLock NSObject new
+
++ NSLock NSObject alloc
+
++ NSLock NSLock allocWithZone:
+
+- NSLock NSLock init
+
++ NSLock NSObject new
+
++ NSLock NSObject alloc
+
++ NSLock NSLock allocWithZone:
+
+- NSLock NSLock init
+
++ NSLock NSObject new
+
+[...]
+
+</code></pre>
+
+
+
+<p>Now, what remains to do is to filter this file, searching for instances of TiWindowProxy, TiViewProxy and TiUIView, for later inspection:</p>
+
+
+
+<pre><code>$ grep 'TiWindowProxy\|TiViewProxy\|TiUIView' /tmp/msgSends-31489 &gt; call-seq.txt
+
+</code></pre>
+
+
+
+<p>and the gems begin to surface:</p>
+
+
+
+<pre><code>+ TiViewProxy NSObject initialize
+
++ TiWindowProxy NSObject initialize
+
+- TiUIWindowProxy TiViewProxy init
+
+- TiUIWindowProxy TiWindowProxy _configure
+
+- TiViewProxy TiProxy _configure
+
+- TiUIWindowProxy TiViewProxy _initWithProperties:
+
+[…]
+
+- TiUIWindowProxy TiWindowProxy open:
+
+- TiUIWindowProxy TiWindowProxy open:
+
+- TiUIWindowProxy TiWindowProxy isModal:
+
+- TiUIWindowProxy TiWindowProxy argOrWindowProperty:args:
+
+- TiUIWindowProxy TiWindowProxy isFullscreen:
+
+- TiUIWindowProxy TiWindowProxy argOrWindowProperty:args:
+
+- TiUIWindowProxy TiWindowProxy openOnUIThread:
+
+- TiUIWindowProxy TiWindowProxy isRootViewAttached
+
+- TiUIWindowProxy TiViewProxy view
+
+- TiUIWindowProxy TiViewProxy viewWillAttach
+
+- TiUIWindowProxy TiWindowProxy newView
+
+- TiUIWindowProxy TiViewProxy appFrame
+
++ TiUIView NSObject initialize
+
+- TiUIWindow TiUIView touchesBegan:withEvent:
+
+- TiUIWindow TiUIView setFrame:
+
+- TiUIWindow TiUIView proxy
+
++ TiViewProxy NSObject class
+
+- TiUIWindow TiUIView setProxy:
+
+</code></pre>
+
+
+
+<p>I need to say that extracting useful information from this sequence is not that easy. However my plan is to follow it as a &#8220;map&#8221; while stepping through the code with the debugger.</p>
+
+
+
+<p>Unfortunately I have no results to show yet. Just stay tuned for a follow up post where I hope I&#8217;ll be able to layout at least a portion of the TiViewProxy object lifecycle.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/post/6299270537/using-intents-for-sending-sms-messages-on-android-with">Using Intents for Sending Sms Messages on Android With Ti Mobile</a></h1>
     
     
@@ -91,9 +275,14 @@
 
 
 
+
+
+
+
   
 
-<time datetime="2011-06-08T00:00:00+02:00" pubdate>Jun 8<span>th</span>, 2011</time>
+
+<time datetime="2011-06-08T00:00:00+02:00" pubdate data-updated="true">Jun 8<span>th</span>, 2011</time>
         
       </p>
     
@@ -252,9 +441,14 @@
 
 
 
+
+
+
+
   
 
-<time datetime="2011-05-25T00:00:00+02:00" pubdate>May 25<span>th</span>, 2011</time>
+
+<time datetime="2011-05-25T00:00:00+02:00" pubdate data-updated="true">May 25<span>th</span>, 2011</time>
         
       </p>
     
@@ -289,6 +483,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/ticonf-2013-and-new-titanium-modules/">tiConf 2013 and new Titanium modules</a>
+      </li>
+    
+      <li class="post">
         <a href="/introducing-tiprofiler-for-ios/">Introducing TiProfiler for iOS</a>
       </li>
     
@@ -302,10 +500,6 @@
     
       <li class="post">
         <a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash one-liner for renaming high-res image files to @2x</a>
-      </li>
-    
-      <li class="post">
-        <a href="/profiling-ti-mobile-apps-is-it-possible/">Profiling Ti Mobile apps: is it possible?</a>
       </li>
     
   </ul>
@@ -330,12 +524,12 @@
 </section>
 
 <section>
-  <h1>Github Repos</h1>
+  <h1>GitHub Repos</h1>
   <ul id="gh_repos">
     <li class="loading">Status updating&#8230;</li>
   </ul>
   
-  <a href="https://github.com/omorandi">@omorandi</a> on Github
+  <a href="https://github.com/omorandi">@omorandi</a> on GitHub
   
   <script type="text/javascript">
     $.domReady(function(){
@@ -351,8 +545,7 @@
             user: 'omorandi',
             count: 3,
             skip_forks: true,
-            target: '#gh_repos',
-            to_hide: ['omorandi.github.com', 'TiImageSlices']
+            target: '#gh_repos'
         });
     });
   </script>
@@ -372,7 +565,7 @@
   </script>
   <script src="/javascripts/twitter.js" type="text/javascript"> </script>
   
-    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @olivier_morandi</a>
+    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-show-count="false">Follow @olivier_morandi</a>
   
 </section>
 
@@ -383,7 +576,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - TiNinja -
+  Copyright &copy; 2013 - TiNinja -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Simulating slow network links on OSX - Titanium Ninja</title>
+  <title>tiConf 2013 and new Titanium modules - Titanium Ninja</title>
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Testing mobile apps in the target platform simulator (either iOS or Android) can often be misleading, since the provided environment is an ideal one &hellip;">
+  <meta name="description" content="Almost two weeks ago I had the pleasure to attend tiConf 2013 in Valencia, where, besides getting in touch with lots of awesome developers from all &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://titaniumninja.com/simulating-slow-network-links-on-os-x/">
+  <link rel="canonical" href="http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
@@ -81,7 +81,7 @@
   
   <header>
     
-      <h1 class="entry-title">Simulating Slow Network Links on OSX</h1>
+      <h1 class="entry-title">tiConf 2013 and New Titanium Modules</h1>
     
     
       <p class="meta">
@@ -97,77 +97,40 @@
   
 
 
-<time datetime="2011-10-31T21:19:00+01:00" pubdate data-updated="true">Oct 31<span>st</span>, 2011</time>
+<time datetime="2013-03-07T16:55:00+01:00" pubdate data-updated="true">Mar 7<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Testing mobile apps in the target platform simulator (either iOS or Android) can often be misleading, since the provided environment is an ideal one. The result is that an app working perfectly when executed in an emulated sandbox may expose unintended behaviors and perfomance when executed in open field on a real device. Moreover, not only physical resources, like processor performance and available memory are very different: also the characteristics of the  network connection available to a development machine (i.e. wifi attached to a DSL or better link) usually outperform those of the mobile Internet links available in the wild, usually ranging from no connection at all to different kinds of 3G connections.</p>
+<div class="entry-content"><center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="500" height="333" alt="@oliviermorandi Discusses native module creation"></a></center>
 
-<p>Several techniques do exist for simulating more realistic network characteristics when testing mobile apps on OS X, however most of them leverage the <em>traffic shaping</em> capabilities of the <code>ipfw</code> builtin firewall. In particular, they use the <code>ipfw pipe</code> command, which allows to define a pipe where all or part of the network traffic originating from, or directed to the host will be forced into.</p>
 
-<p>The characteristics of the pipe can be shaped according to specific requirements in terms of bandwidth, delay and packet-loss-ratio of the link that needs to be modeled, thus enabling a high flexibility. A pipe can be configured through the following command:</p>
+<p>Almost two weeks ago I had the pleasure to attend <a href="http://ticonf.eu">tiConf 2013</a> in Valencia, where, besides getting in touch with lots of awesome developers from all over the world, I held a workshop on native module development for Titanium on both iOS and Android platforms. Here&#8217;s the presentation:</p>
 
-<pre><code>ipfw pipe &lt;num&gt; config bw &lt;bw&gt; delay &lt;d&gt; plr &lt;plr&gt;
-</code></pre>
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
 
-<p>where <code>num</code> is a number identifying the pipe, <code>bw</code> the desired bandwidth measured in <code>[K|M]{bit/s|Byte/s}</code>, <code>delay</code> is the propagation delay measured in milliseconds, and <code>plr</code> is the packet-loss-ratio, i.e. a number in the range [0..1].</p>
 
-<p>The following adds a firewall rule for the pipe:</p>
+<p>During the talk I gave a quick tour on how to start creating modules, with an emphasis on how JS to native bindings are structured in the Titanium framework, presenting a bunch of real-world use cases. Among the others, I mentioned a module for offloading to native code the conversion of XML documents into JSON structures, which wasn&#8217;t yet published.</p>
 
-<pre><code>ipfw add &lt;rule-num&gt; pipe &lt;num&gt; &lt;protocol&gt; from &lt;src&gt; to &lt;dst&gt;
-</code></pre>
+<p>I had this module lying around for several months, so in the past few days I took some time to polish the iOS version and I published it on GitHub here: <a href="https://github.com/omorandi/TiXml2Json">github.com/omorandi/TiXml2Json</a>, and I think it represents a very good start for understanding some of the concepts around Titanium native module creation.</p>
 
-<p>The meaning of the command is the following:</p>
+<p>But why shall we need such kind of functionality implemented in native code in the first place? Actually, parsing XML structures through the DOM API is somewhat cumbersome and inefficient, while working with JSON structures is more easily manageable. For doing this we could use any of the good JavaScript modules available, like <a href="https://github.com/dbankier/XMLTools-For-Appcelerator-Titanium">the one from David Bankier</a>, however, when the size of the XML string is relevant, the parsing phase can be very slow, thus blocking the execution of other parts of our app for a significant and noticeable amount of time. A possible solution is then to do the conversion in native land, achieving better performance. In some cases this may still not be enough, so I also implemented an asynchronous version of the conversion method, which offloads the conversion process on a separate thread, keeping the JavaScript thread free to continue its normal flow, thus adding responsiveness to the client application.</p>
 
-<pre><code>* add rule with number rule-num
-* get all the packets containing protocol and directed from src to dst
-* flow them through the pipe identified by num
-</code></pre>
+<p>So, the module exports a very simple API with just two methods:</p>
 
-<p>For example, modeling a GPRS link could be done with:</p>
+<ul>
+<li><code>convert(xml)</code></li>
+<li><code>convertAsync(xml, callback)</code></li>
+</ul>
 
-<pre><code>sudo ipfw pipe 1 config bw 56Kbit/s delay 200 plr 0.2
-sudo ipfw add 1 pipe 1 ip from any to any
-</code></pre>
 
-<p>which forces all the ip traffic through a 56Kbps link with a 200ms delay, which loses 20 packets out of 100 in average.</p>
+<p>The former takes the xml document as a string or blob argument and returns the corresponding JSON representation as a traditional JS object (dictionary). The latter implements the asynchronous version described above, which takes an additional argument for the callback function that will be invoked with the resulting JS object at the end of the process.</p>
 
-<p>It should be noted that while the rule is enforced, <strong>all</strong> the network traffic generated from or directed to the host machine is affected. Once the testing has been performed, the rule can be deleted with the command:</p>
+<p>This week I also published another iOS module: <a href="https://github.com/omorandi/TiAssetsLibrary">TiAssetsLibrary</a>, which wraps the <a href="http://developer.apple.com/library/ios/#documentation/AssetsLibrary/Reference/AssetsLibraryFramework/_index.html">iOS AssetsLibrary framework</a> with an almost 1 to 1 mapping between the JS and the native API. This module deserves another post where I&#8217;d like to talk about performance implications of API design.</p>
 
-<pre><code>sudo ipfw delete 1
-</code></pre>
-
-<p>Not all network links have symmetric characteristics. In those cases it&#8217;s possible to model in a different way the uplink and the downlink sections with the following rules:</p>
-
-<pre><code>sudo ipfw pipe 1 config bw 780Kbps delay 100
-sudo ipfw pipe 2 config bw 330Kbps delay 100
-sudo ipfw add 1 pipe 1 in proto ip
-sudo ipfw add 1 pipe 2 out proto ip
-</code></pre>
-
-<p>More details can be found in the <a href="http://developer.apple.com/library/mac/#documentation/Darwin/Reference/ManPages/man8/ipfw.8.html">ipfw man page</a> and in the original <a href="http://info.iet.unipi.it/~luigi/dummynet/">Dummynet project</a> page.</p>
-
-<p>Using this technique from the command line, while effective, is probably not much practical. Moreover, figuring out realistic values for the required parameters can be a quite difficult task. A help in overcoming these issues comes from the developer tools available with XCode 4.2 on OS X Lion that, among others, provide a system preference pane called &#8220;Network Link Conditioner&#8221;, which allows to perform the same operations I listed before through a simple GUI, with a lot of predefined configuration templates.</p>
-
-<p>The tool can be found here:</p>
-
-<pre><code>/Developer/Applications/Utilities/Network\ Link\ Conditioner/Network Link Conditioner.prefPane
-</code></pre>
-
-<p>and once installed is made available in the System Preferences:</p>
-
-<p><img class="center" src="/images/posts/NetConditionerSysPref.png"></p>
-
-<p>The panel allows selecting a configuration from a list of presets, which comprise different kinds of mobile and &#8220;home&#8221; network links:</p>
-
-<p><img class="center" src="/images/posts/NetConditioner.png"></p>
-
-<p>The desired settings can be activated through the big switch present on the left of the panel and, in case the available presets are not sufficient, it&#8217;s possible to define custom configurations through the &#8220;Manage Profiles&#8221; button:</p>
-
-<p><img class="center" src="/images/posts/NetConditionerManage.png"></p>
+<p>That&#8217;s all for now. See you at the next <a href="http://ticonf.eu">tiConf</a>.</p>
 </div>
 
 
@@ -190,7 +153,7 @@ sudo ipfw add 1 pipe 2 out proto ip
   
 
 
-<time datetime="2011-10-31T21:19:00+01:00" pubdate data-updated="true">Oct 31<span>st</span>, 2011</time>
+<time datetime="2013-03-07T16:55:00+01:00" pubdate data-updated="true">Mar 7<span>th</span>, 2013</time>
       
 
 
@@ -198,7 +161,7 @@ sudo ipfw add 1 pipe 2 out proto ip
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/simulating-slow-network-links-on-os-x/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/simulating-slow-network-links-on-os-x/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/" >Tweet</a>
   
   
   
@@ -207,10 +170,8 @@ sudo ipfw add 1 pipe 2 out proto ip
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/post/10559549700/fastdev-for-ios-how-it-works" title="Previous Post: FastDev for iOS: how it works">&laquo; FastDev for iOS: how it works</a>
+        <a class="basic-alignment left" href="/introducing-tiprofiler-for-ios/" title="Previous Post: Introducing TiProfiler for iOS">&laquo; Introducing TiProfiler for iOS</a>
       
-      
-        <a class="basic-alignment right" href="/building-titanium-mobile-jscore-from-source/" title="Next Post: Building Titanium Mobile JSCore from source">Building Titanium Mobile JSCore from source &raquo;</a>
       
     </p>
   </footer>
@@ -342,8 +303,8 @@ sudo ipfw add 1 pipe 2 out proto ip
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://titaniumninja.com/simulating-slow-network-links-on-os-x/';
-        var disqus_url = 'http://titaniumninja.com/simulating-slow-network-links-on-os-x/';
+        var disqus_identifier = 'http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/';
+        var disqus_url = 'http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/';
         var disqus_script = 'embed.js';
       
     (function () {

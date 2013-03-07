@@ -4,7 +4,7 @@
   <title><![CDATA[Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2012-10-09T13:46:37+02:00</updated>
+  <updated>2013-03-07T17:43:05+01:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -12,6 +12,41 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[tiConf 2013 and new Titanium modules]]></title>
+    <link href="http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/"/>
+    <updated>2013-03-07T16:55:00+01:00</updated>
+    <id>http://titaniumninja.com/ticonf-2013-and-new-titanium-modules</id>
+    <content type="html"><![CDATA[<center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="500" height="333" alt="@oliviermorandi Discusses native module creation"></a></center>
+
+
+<p>Almost two weeks ago I had the pleasure to attend <a href="http://ticonf.eu">tiConf 2013</a> in Valencia, where, besides getting in touch with lots of awesome developers from all over the world, I held a workshop on native module development for Titanium on both iOS and Android platforms. Here&#8217;s the presentation:</p>
+
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
+
+
+<p>During the talk I gave a quick tour on how to start creating modules, with an emphasis on how JS to native bindings are structured in the Titanium framework, presenting a bunch of real-world use cases. Among the others, I mentioned a module for offloading to native code the conversion of XML documents into JSON structures, which wasn&#8217;t yet published.</p>
+
+<p>I had this module lying around for several months, so in the past few days I took some time to polish the iOS version and I published it on GitHub here: <a href="https://github.com/omorandi/TiXml2Json">github.com/omorandi/TiXml2Json</a>, and I think it represents a very good start for understanding some of the concepts around Titanium native module creation.</p>
+
+<p>But why shall we need such kind of functionality implemented in native code in the first place? Actually, parsing XML structures through the DOM API is somewhat cumbersome and inefficient, while working with JSON structures is more easily manageable. For doing this we could use any of the good JavaScript modules available, like <a href="https://github.com/dbankier/XMLTools-For-Appcelerator-Titanium">the one from David Bankier</a>, however, when the size of the XML string is relevant, the parsing phase can be very slow, thus blocking the execution of other parts of our app for a significant and noticeable amount of time. A possible solution is then to do the conversion in native land, achieving better performance. In some cases this may still not be enough, so I also implemented an asynchronous version of the conversion method, which offloads the conversion process on a separate thread, keeping the JavaScript thread free to continue its normal flow, thus adding responsiveness to the client application.</p>
+
+<p>So, the module exports a very simple API with just two methods:</p>
+
+<ul>
+<li><code>convert(xml)</code></li>
+<li><code>convertAsync(xml, callback)</code></li>
+</ul>
+
+
+<p>The former takes the xml document as a string or blob argument and returns the corresponding JSON representation as a traditional JS object (dictionary). The latter implements the asynchronous version described above, which takes an additional argument for the callback function that will be invoked with the resulting JS object at the end of the process.</p>
+
+<p>This week I also published another iOS module: <a href="https://github.com/omorandi/TiAssetsLibrary">TiAssetsLibrary</a>, which wraps the <a href="http://developer.apple.com/library/ios/#documentation/AssetsLibrary/Reference/AssetsLibraryFramework/_index.html">iOS AssetsLibrary framework</a> with an almost 1 to 1 mapping between the JS and the native API. This module deserves another post where I&#8217;d like to talk about performance implications of API design.</p>
+
+<p>That&#8217;s all for now. See you at the next <a href="http://ticonf.eu">tiConf</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Introducing TiProfiler for iOS]]></title>

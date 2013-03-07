@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: iOS | Titanium Ninja]]></title>
+  <title><![CDATA[Category: iOS, | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/ios/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2012-10-09T13:46:37+02:00</updated>
+  <updated>2013-03-07T17:43:05+01:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -14,96 +14,174 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Profiling Ti Mobile apps: is it possible?]]></title>
-    <link href="http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible/"/>
-    <updated>2012-03-12T12:08:00+01:00</updated>
-    <id>http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible</id>
-    <content type="html"><![CDATA[<p>Short answer is: "YES" (at least on iOS - for now), and this post is here to share some very early results for supporting such statement. What's reported here is just something I started working on in the last few weeks and it's still a quite long term work in progress.</p>
+    <title type="html"><![CDATA[Introducing TiProfiler for iOS]]></title>
+    <link href="http://titaniumninja.com/introducing-tiprofiler-for-ios/"/>
+    <updated>2012-07-27T16:35:00+02:00</updated>
+    <id>http://titaniumninja.com/introducing-tiprofiler-for-ios</id>
+    <content type="html"><![CDATA[<p>Around four months ago I started experimenting with some <a href="http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible/">custom modifications</a> to the  JavaScriptCore library, which is the JavaScript engine used by the Titanium Mobile SDK for executing Titanium applications on iOS. After succeeding in enabling the profiler component provided by JSCore and extracting some relevant profiling data from running applications, I wanted a tool that would allow me to show such information in a manageable way, like the Web Inspector and Developer tools allow to do in Safari or Chrome.</p>
 
-<h2>Profiling tools</h2>
-
-<p>Profiling means measuring how much time is spent in every relevant portion of code of an application during its execution, and it represents the first step to be done when searching for spots in the code that can be optimized, in order to achieve better performance. Performing any form of optimization without profiling first is like running a race with blinded eyes.</p>
-
-<p>So, what does it mean profiling a Titanium Mobile application written in JavaScript? What tools do we have? How can we find hotspots in our poorly behaving apps? The reality is that unlike other development enviroments, the Titanium Mobile SDK doesn't provide any tool for accurately profiling JS apps.
-When developing for iOS, we can use the Instruments profiling tool provided with Xcode, and the typical results obtained using such tool are shown in the following picture:</p>
-
-<p><img class="center" src="/images/posts/XcodeProfilingTool.png"></p>
-
-<p>in the bottom-right panel we see a list of functions and methods with the associated total time spent executing them. However, while this kind of information gives us a notion on the time spent inside the functions of the framework, the time spent in our JavaScript functions, which are those we probably want to optimize, is completely hidden behind the calls to the functions of the JavaScript interpreter.</p>
-
-<p>On the other hand, developers coming from web development may be used to working with the JS tools provided by the major browsers (e.g. Firebug in Firefox, Chrome &amp; Safari developer tools, etc.), which give us detailed profiling information on the scripts being executed by a web page. For example, the following picture shows the results obtained with the developer tools available with Chrome:</p>
-
-<p><img class="center" src="/images/posts/ChromeProfiling.png"></p>
-
-<h2>Profiling Ti apps</h2>
-
-<p>Since I need to profile a quite complex Titanium Mobile application for finding hotspots in the code that may need to be offloaded to some native modules, I started guessing how could I achieve my goal. As usual, digging into the Ti SDK code helps a lot, and after following the white rabbit in the hole I found the response in the code of the JavaScriptCore interpreter. We always have to remember that Titanium Mobile shares its core engines with Safari and Chrome, i.e. JavaScriptCore and V8 respectively, so any low level feature tied to JS execution available in these browsers is also available in Titanium, moreover all that code is completely available as open source. So, it turns out that most of the features needed for profiling JS code are exactly where they should be, i.e. in the interpreter.</p>
-
-<p>For those who wonder how a profiler works, it's easy told. The profiler is nothing more than a component that records the time when each function gets called and when it returns. Whenever the interpreter needs to execute a function, it tells the profiler: "I'm going to execute function F, which starts at line X of file at URL Y". The same just after the execution of the function: "I executed Function F, bla bla". This allows the profiler to have a clear vision on two very important kinds of information:</p>
+<p>My basic requirements were the following:</p>
 
 <ul>
-<li>How function calls are related, i.e. the <a href="http://en.wikipedia.org/wiki/Call_graph">call graph</a></li>
-<li>How much time is spent during the execution of every function</li>
+<li>The tool needed to be able to start and stop the profiler running alongside a Titanium Mobile application executed on the iOS Simulator, as well as to retrieve the collected profiling data</li>
+<li>The GUI app should be very simple and quick and easy to develop: a web app would be good enough</li>
+<li>I wanted to be able to show the profiling data (i.e. a function call tree showing the amount of time spent in each function) in the typical expandable tree grid</li>
+<li>I wanted to be able to quickly show the source code of every referenced function, in order to better understand the data every time an anonymous function was reported</li>
 </ul>
 
 
-<p>Obviously, the total time spent in a function will also include the time spent in nested function calls, but the profiler keeps track of these situations, in order to give accurate results.</p>
+<p>So I started creating a very simple web-based GUI and a node.js server component providing a proxy between the client app and the profiler, and today I'm able to introduce some results, with the following demo screencast:</p>
 
-<p>So, during my journey, I managed to <a href="/2012-03-02-building-titanium-mobile-jscore-from-source">build the JavaScriptCore library from scratch</a> and I started tweaking the code in order to be able to start and stop the profiling from the native code of a Titanium application. I had a quite encouraging success a couple of weeks ago and tweeted about it:</p>
-
-<blockquote class="twitter-tweet"><p>YAY! got JSCore profiler running in Ti Mobile on iOS! Still work to be done for extracting useful info, though - <a href="https://t.co/yXtItEwS" title="https://skitch.com/omorandi/8ggw7/xcode">skitch.com/omorandi/8ggw7…</a></p>&mdash; Olivier Morandi (@olivier_morandi) <a href="https://twitter.com/olivier_morandi/status/175231374662443010" data-datetime="2012-03-01T14:49:50+00:00">March 1, 2012</a></blockquote>
+<iframe src="http://player.vimeo.com/video/46148981" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 
 
-<script src="http://titaniumninja.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p> <p><a href="http://vimeo.com/46148981">TiProfiler demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p></p>
 
-
-<p>Actually I was happy about the integration, but no real profiling data was returned. After studying more deeply the code and a lot of debugging, today I've been able to produce a  more meaningful profile of a test application, which is composed of a barebone <code>app.js</code> file:</p>
-
-<script src="https://gist.github.com/2029449.js?file=app.js"></script>
-
-
-<p>and a module containing a couple of functions performing some useless math tasks. The module is suitable to be either included via <code>Ti.include()</code>, or required through CommonJS <code>require()</code>:</p>
-
-<script src="https://gist.github.com/2029449.js?file=included.js"></script>
-
-
-<p>Please note that the two test functions in <code>included.js</code> are defined in different ways. The first is defined as a <strong>named function</strong> <code>test1()</code>, while the other is defined as an <strong>anonymous function</strong>, which is assigned to the variable <code>test2</code>.</p>
-
-<p>Now let's have a look at what results we have in the Xcode console when I run this program with Ti 2.0.0 and my modified version of the TiJSCore library (click on the image to see it at full size with annotations):</p>
-
-<p><a href="http://titaniumninja.com/images/posts/JSCProfiling-include-annotated.png"><img class="center" src="/images/posts/JSCProfiling-include.png"></a></p>
-
-<p>What gets printed in the console log is the call graph of the program, recorded during its execution. Indentation reflects the caller->called hierarchy and the reported information includes (if available) the file containing the called function, the line where the function is defined the name of the function (more on this later) and the time statistics in terms of "Total Time" spent in the function and "Self Time", which is given by the "Total Time" for the function minus the time spent in nested calls.</p>
-
-<p>In the call graph, some calls are reported with <code>&lt;nofile&gt;</code> file information. These are mainly native and host functions (e.g. <code>Math.cos()</code>, <code>Math.sin()</code>, <code>Ti.include()</code>, and <code>Ti.API.info()</code>), for which no source file is given. Moreover, the calls reported to <code>(program)</code> are those happening in the global scope, while those reported as <code>(Function object)</code> are those made to native and host functions. Similarly, the calls reported as <code>(anonymous function)</code> are obviously those made to anonymous functions. So, depending on how a program is structured it may be more or less easy to interpret such profiling information. For instance, in my apps, a good 90% of the functions are anonymous.</p>
-
-<h2>How did I make it?</h2>
-
-<p>As I told, this is still work in progress and all I have profiled until now is some very basic test application like the one reported here. For achieving these early results I had to:</p>
-
-<ol>
-<li>Extend a bit the TiJSCore library, in order to expose a couple of functions to the Ti SDK, which are used for starting and stopping the profiler.</li>
-<li>Perform some very small modifications to the interpreter in order to enable code instrumentation (i.e. the code that's used for generating profile data)</li>
-<li>Modify the iOS application template generated by the Ti SDK, in order to start the profiler when the first JS execution context is created, and stop the profiling when the application goes in background (e.g. because the user presses the home button), printing the profiling report as a result</li>
-</ol>
-
-
-<p>All this isn't usable yet for profiling "any" real world application, since most of the steps required still need to be done by hand (i.e. patching the Ti SDK and so on), so I think I'll wait until the thing is a bit more stable before publishing the code.</p>
-
-<h2>Future steps</h2>
-
-<p>What's missing? A lot of things, here are some:</p>
+<p>This has been possible thanks to the following technologies/libraries:</p>
 
 <ul>
-<li>Checking out what happens with event listeners and callbacks</li>
-<li>Test with more complex applications</li>
-<li>Creating install scripts in order to streamline the operation on existing applications</li>
-<li>Move code for starting and stopping the profiling out of the Ti SDK and put it in a module</li>
-<li>Enable the possiblity to start and stop the profiling and analyzing results from a front-end cli app</li>
+<li><a href="http://www.sencha.com/products/extjs/">Ext JS</a>: General GUI layout &amp; tree-grid</li>
+<li><a href="http://ace.ajax.org/">ACE editor</a>: for showing the original source code of the selected application files</li>
+<li><a href="http://socket.io/">socket.io</a>: for event-based communication between all the components</li>
 </ul>
 
 
-<p>That's it. If anyone is interested in more details don't hesitate to contact me.</p>
+<p>The screencast showcases the usage of the three main components involved:</p>
+
+<ul>
+<li>The node-based server, used for serving the client app files and for communicating  with both the profiler and the GUI</li>
+<li>The GUI app itself</li>
+<li>The Titanium Mobile application, built and executed through a custom version of the 2.1.0.GA Titanium SDK, with all the required additions to make the magic possible</li>
+</ul>
+
+
+<p>The node server gets notified when the Titanium application and the profiler are started, re-broadcasting such events.
+The web-app, on the other side, issues start &amp; stop commands to the node server, which reflects them to the profiler running inside of the Ti app.</p>
+
+<p>At the core of the system lies a custom version of the TiJSCore library, and some very limited additions to the inner workings of the Titanium Kroll bridge. In particular, besides the basic modifications already mentioned in the <a href="http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible">previous post</a>, it has been necessary to do the following:</p>
+
+<ul>
+<li>modifying the code managing the CommonJS <code>require()</code> function, in order to make both the JS interpreter and the profiler aware of the names of the files being loaded through it</li>
+<li>decorating the calls to methods of Titanium proxy objects with a representation of their real name, in order to highlight them with something more meaningful than <code>(Function oject)</code>. For example a call to <code>Ti.UI.Window.open()</code> now it's reported as <code>[object TiUIWindow].open</code>: not exactly the JavaScript signature, but quite similar, indeed</li>
+<li>building a bit of infrastructure in order to allow the profiler to communicate remotely, either for receiving <code>start</code> and <code>stop</code> commands, either for sending the recorded profiling data. Using the <a href="https://github.com/pkyeck/socket.IO-objc">iOS port of the socket.io library</a> helped a lot in this context.</li>
+<li>other minor adjustments (e.g. converting profiling data returned by the JSCore profiler to JSon)</li>
+</ul>
+
+
+<p>At the moment I'm not planning to release these modifications and additions as open source. I'm still thinking about what to do about them. Actually it would be nice if at some point they could be integrated into the Titanium SDK.</p>
+
+<p>Anyway, I'm willing to share this tool with the Titanium community, letting interested folks to play with it, and report any kind of feedback, so I've created a <a href="https://github.com/omorandi/TiProfiler">repository on github</a> hosting both the node server and the client app source code.</p>
+
+<p>Originally I was aiming to keep all the modifications to the JSCore library, as well as the corresponding hooks inside the Titanium SDK completely self-contained in a single binary, in order to be able to provide just a simple drop-in replacement for the <code>libTiCore.a</code> library, to be plugged in a standard distribution of the Ti SDK. However, after integrating <code>socket.io</code> on the iOS side, things are a bit more complicated, since <code>socket.io</code> requires the target app to be linked with the Security framework, which is not linked by default in the standard Titanium Xcode template. For this reason, in order to keep things super-simple for anyone interested in this project, I've prepared a package containing a <a href="https://s3.amazonaws.com/titaniumninja/tiprofiler/2.1.0.GA-profiler.zip">custom version of the 2.1.0.GA Titanium SDK</a> that can coexist side by side with the official SDKs provided by Appcelerator already present in the system.</p>
+
+<p>Anybody wanting to follow all the steps, without using the prebuilt package, can download a <a href="https://s3.amazonaws.com/titaniumninja/tiprofiler/libTiCore.a.zip">custom build of the libTiCore.a library</a>, copy it in the <code>${TI_SDK}/iphone</code> directory of a 2.X.X version of the Ti SDK (where <code>${TI_SDK}</code> for example is <code>/Library/Application\ Support/Titanium/mobilesdk/osx/2.1.0.GA</code>, open the <code>${TI_SDK}/iphone/iphone/Titanium.xcodeproj</code>) and add there a reference to the Security framework.</p>
+
+<p>The custom SDK can be used for building, executing and profiling any Titanium application on iOS, with the following, and maybe more, limitations:</p>
+
+<ul>
+<li>It doesn't work for Android targets</li>
+<li>It can be used only with apps running inside the iOS Simulator:  apps should be able to execute on device, but at the moment, no profiling data can be exchanged with the node.js server component. Results of building and running Ti apps on device with such SDK are currently undefined</li>
+<li>The client app is currently very limited</li>
+</ul>
+
+
+<h2>Wrap up</h2>
+
+<p>Where do we go from here?</p>
+
+<p>I have a bunch of things I'd like to improve/work on in the very near future. Here are some:</p>
+
+<ul>
+<li>Replace the currently very limited web-app with the client from the <a href="https://github.com/dannycoates/node-inspector/">Node Inspector</a> project. This is actually a fork of the WebKit Web Inspector that can be used to debug and experimentally profile node.js applications. Modifying this to work with my server should be fairly easy</li>
+<li>Improve the way in which anonymous functions are reported. It is true that these functions are actually unnamed, but in most cases they're usually referenced through a variable or an object member. I'd like to leverage the features of the super-cool <a href="http://esprima.org/">Esprima</a> JavaScript parser in order to extract such information directly from source files, reporting the name of the referencing variable/member when possible</li>
+<li>Make things work on device</li>
+<li>Start studying how to do something similar on V8 for android targets</li>
+</ul>
+
+
+<p>Any comment is well accepted, either here, or on <a href="http://twitter.com/olivier_morandi">twitter</a>. This project is needing some love, especially on the GUI component and node server side. Feel free to fork it on github and make pull requests.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Titanium Mobile: Flexibility vs. Performance]]></title>
+    <link href="http://titaniumninja.com/titanium-mobile-flexibility-vs-performance/"/>
+    <updated>2012-05-28T01:14:00+02:00</updated>
+    <id>http://titaniumninja.com/titanium-mobile-flexibility-vs-performance</id>
+    <content type="html"><![CDATA[<p>Last week I had the pleasure to give a talk at the <a href="http://www.whymca.org/">WhyMCA Italian Mobile Developer Conference</a>. The title of the talk is <a href="http://www.whymca.org/intervento/titanium-mobile-flexibility-vs-performance">"Titanium Mobile: Flexibility vs. Performance"</a>. Despite being structured as a quite technical speech, at it's heart I consider it a "philosophical" one, since its message is highly related to why I think the approach to cross platform mobile development and code portability provided by Titanium is, albeit always perfectible, the right one. In this post I'd like to expand a bit on the motivations behind this line of thinking.</p>
+
+<p>Titanium isn't a write-once-run-everywhere platform. As Appcelerator's guys use to say, its aim is to be a write-once-adapt-everywhere tool, since, while using a common high level language and API, it enables the exploitment of platform specific features when needed. This philosophy is clearly visible in the API, as we have entire sub-namespaces dedicated to either iOS, or Android. This allows adapting our mobile applications to the platforms where they're executed, thus avoiding a write once, suck everywhere effect. Moreover, the possibility to develop custom native extensions to the framework opens  up a wide range of development scenarios, ideally allowing us to create user experiences that are practically undistinguishable from those of applications developed with native SDKs.</p>
+
+<p>My point of view on this kind of approach to cross platform portability has its roots in the work I took over during 5 years as a researcher, where I explored the boundaries of flexibility (in terms of ease of development and cross platform portability) and performance in the field of network processing architectures. If you really have nothing better to do, you can check out my <a href="/doc/2009-PhD-MorandiOlivier.pdf">PhD dissertation thesis</a> dating back to the beginning of 2009 for additional details.</p>
+
+<p>While at a completely different scale, in mobile application development we face challenges that are very similar to those that passionated me during my research:</p>
+
+<ul>
+<li>heterogeneous and incompatible mobile device platforms and OSs</li>
+<li>while native capabilities are quite homogeneous across platforms, UIs are not</li>
+<li>each platform must be programmed with it's own SDK, each one based on a different language (e.g. Java for Android, objective-c for iOS, and so on) - code reuse and portability is impossible</li>
+<li>we have stringent constraints on the User Experience: apps with a poor UX fail to gain wide adoption</li>
+</ul>
+
+
+<p>In this scenario, the approach proposed by Titanium is very interesting:</p>
+
+<ul>
+<li>It's based on a high level language that abstracts away the different programming models of the target platforms</li>
+<li>It provides a very wide and flexible <strong>high level</strong> API (in contrast to other technologies, like the very recent <a href="http://www.rubymotion.com/">RubyMotion</a>, which provides just Ruby wrappers around the classes of the iOS Cocoa Touch framework)</li>
+<li>It's extensible through natively coded modules for leveraging native features of the target platform</li>
+</ul>
+
+
+<p>Titanium applications are native by all means anyway, since even if written in JavaScript, they directly rely on native functionality. However, as its API is very general and flexible, allowing to adapt the same macro components to very disparate uses, in some cases this may cause slow downs and not so slick user experiences. It's quite simple to explain why this happens: when the code implementing an UI component (e.g. a TableView), must be able to adapt to every possible use, we are introducing some amount of overhead, with the result of trading off performance in favor of flexibility.</p>
+
+<p>So, in my presentation, I tried to propose two main lines of thought based on the realistic scenario of performance problems related to the creation and scrolling of a table view. The first line of thought tries to make the point that when we face a performance problem, which in mobile development is frequently a UX problem, we need to go to the root of the issue, by understanding what is causing it. This means the following things:</p>
+
+<ul>
+<li>we need to know how the tools we're using actually work under the hood: Titanium doesn't use the same JS engine on both iOS and Android. In particular, JavaScriptCore and V8 are very different implementations of JS, the latter being an optimizing JIT compiler, while the former is actually a bytecode interpreter, as JIT compilations is forbidden by iOS</li>
+<li>As a corollary, relying on some old school micro-optimizations, like caching the length of an array while iterating over it in a for loop, may be actually useless, since if the body of the loop is "fat" enough, I'm quite sure you're not wasting time in that check. Moreover, if that loop is "hot" enough, V8 will automatically optimize it anyway, by hoisting the access to the array length outside of the loop (check out this video from JSConf 2012: <a href="http://blip.tv/jsconf/jsconf2012-vyacheslav-egorov-6141593">"One day of life in V8" by Vyacheslav Egorov</a>)</li>
+<li>We need to <strong>measure</strong>, at first even just in a rough way, in order to find where we are loosing time</li>
+</ul>
+
+
+<p>This last point raises an alert on the lack of accurate profiling tools that we can productively use for measuring the actual performance of our code. My extensions to Titanium for leveraging the <a href="/profiling-ti-mobile-apps-is-it-possible/">JavaScriptCore profiler</a> are still work in progress, and I'll hopefully post an update on that story soon.</p>
+
+<p>The other line of thought I pursued, is related to what we can do for increasing the scrolling performance of our table view component. Table views are a critical component in most applications, and those presenting complex row layouts can result in choppy scrolling animations for several reasons. Complex row layouts are actually a problem also when developed natively, however, in Titanium we have much less opportunities for optimizations, as we obviously need to rely on the provided API implementation, which is crafted in a way that enhances flexibility and ease of use for the developer.</p>
+
+<p>In my presentation I propose a short investigation on the reasons that underly a lack of scrolling performance, by using the Instruments Core Animation profiling tools provided with Xcode. Scrolling issues are usually caused by transparent, or non-opaque views, like labels, which make the rendering engine do extra work for computing how superimposed views blend together. Another major pain point (often more important than the former) is represented by views with rounded corners, which need more iterations to be rendered. In this case, a very simple solution is to use image masks: a semi transparent image to be superimposed to the view that needs rounded corners. If the view is an ImageView, the <a href="http://developer.appcelerator.com/apidoc/mobile/latest/Titanium.UI.MaskedImage-object"><code>Ti.UI.MaskedImage</code></a> component does just the right job.</p>
+
+<p>There's an interesting session from Apple's WWDC 2010 where these kinds of performance issues are analyzed. The talk is titled "Performance Optimization on iPhone OS". If you are registered as an Apple developer you can download the video from <a href="https://developer.apple.com/videos/wwdc/2010/">https://developer.apple.com/videos/wwdc/2010/</a>.</p>
+
+<p>So we come to the center point of my reasoning. If we are not able to fulfill our performance goals by tweaking our use of the standard API, Titanium allows us to implement our performance-critical components as native modules. In other words, we can trade flexibility for gaining performance. For doing so, we must give up some amount of generality and the possibility to reuse our code in other applications by implementing an optimized component that exposes an application-specific semantic: both the API and the implementation of the module will be tailored on the peculiar application and it's performance requirements.</p>
+
+<p>Following the table view example, on iOS this translates into having tableview rows with a hardcoded layout, possibly with sub-views whose <code>opaque</code> property is set to true on iOS, and so on. Would we still be dissatisfied with the result, we can always rely on the concept of fast-cells, which  are tableview cells actually composed by a single view, where all information to be shown is laid out by using low level CoreGraphics drawing primitives. Check out the <a href="http://iosboilerplate.com/">iOS Boilerplate project</a> and <a href="http://developer.apple.com/library/ios/#samplecode/TableViewSuite/Introduction/Intro.html#//apple_ref/doc/uid/DTS40007318">this coding example from Apple</a> for additional information.</p>
+
+<p>Summarizing, what does all this mean? That Titanium Mobile is a tool allowing us to create very complex <strong>cross platform</strong> mobile applications in a fraction of the time needed to make parallel developments using native SDKs. The possibility to extend the framework with native modules opens up a wide range of development scenarios, enabling both the reuse of existing native libraries, and the optimization of performance-critical portions of the app, when needed.</p>
+
+<p>Is it a panacea? Not really, IMHO. I use Titanium since version 0.8, and despite a visible effort in making it better release after release, even now that version 2.0 is out I think it's still a bit immature. I still see it somewhat a platform made for hackers, rather than for developers, as without a deep knowledge of its internals it's often impractical to overcome even trivial issues like a failed build. A quick look at most of the questions on the Q&amp;A forum will suffice to support my point of view on this.</p>
+
+<p>That said, even taking into account the problems, I think Titanium is the right tool every time we are dealing with an application that needs to support both iOS and Android platforms, whose value resides in a rather complex business logic, instead of just in the presentation layer. In these cases, we don't want to develop, test, debug, and maintain different implementations of the same solution across different platforms. Moreover, being based on a high level abstraction layer (JS language + very flexible API), Titanium allows very quick iterations in the solution space, which is an invaluable feature when we are trying to validate business ideas against unkown markets.</p>
+
+<p>Finally, here you find the slides of my presentation:</p>
+
+<div style="width:425px" id="__ss_13102557"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance">Titanium Mobile: flexibility vs. performance</a></strong><object id="__sse13102557" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" /><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="wmode" value="transparent"/><embed name="__sse13102557" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" width="425" height="355"></embed></object><div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/omorandi">omorandi</a>.</div></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Bash one-liner for renaming high-res image files to @2x]]></title>
+    <link href="http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/"/>
+    <updated>2012-03-21T13:54:00+01:00</updated>
+    <id>http://titaniumninja.com/bash-one-liner-for-renaming-high-res-image-files-to-at-2x</id>
+    <content type="html"><![CDATA[<p>This tip may be useful to iOS developers when they're given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
+
+<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
+
+<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
+</code></pre>
+
+<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
 ]]></content>
   </entry>
   

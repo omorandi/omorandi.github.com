@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: jasmine, | Titanium Ninja]]></title>
-  <link href="http://titaniumninja.com/blog/categories/jasmine-/atom.xml" rel="self"/>
+  <title><![CDATA[Category: testing, | Titanium Ninja]]></title>
+  <link href="http://titaniumninja.com/blog/categories/testing/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2012-10-09T13:46:37+02:00</updated>
+  <updated>2013-03-07T17:43:05+01:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>

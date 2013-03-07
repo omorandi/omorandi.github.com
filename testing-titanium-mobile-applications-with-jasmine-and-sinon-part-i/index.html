@@ -18,18 +18,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i">
+  <link rel="canonical" href="http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
   <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
 <link href='http://fonts.googleapis.com/css?family=Alike+Angular' rel='stylesheet' type='text/css'>
 <link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
   
   <script type="text/javascript">
     var _gaq = _gaq || [];
@@ -59,12 +59,14 @@
   <li><a href="http://feeds.feedburner.com/TitaniumNinja" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
   
 </ul>
+  
 <form action="http://google.com/search" method="get">
   <fieldset role="search">
     <input type="hidden" name="q" value="site:titaniumninja.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
+  
 <ul class="main-navigation">
   <li><a href="/">Blog</a></li>
   <li><a href="/whoami/">whoami</a></li>	
@@ -88,9 +90,14 @@
 
 
 
+
+
+
+
   
 
-<time datetime="2012-06-11T18:16:00+02:00" pubdate>Jun 11<span>th</span>, 2012</time>
+
+<time datetime="2012-06-11T18:16:00+02:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
         
       </p>
     
@@ -257,14 +264,19 @@ jasmine-node spec
 
 
 
+
+
+
+
   
 
-<time datetime="2012-06-11T18:16:00+02:00" pubdate>Jun 11<span>th</span>, 2012</time>
+
+<time datetime="2012-06-11T18:16:00+02:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/jasmine-/'>jasmine,</a>, <a class='category' href='/blog/categories/sinon-/'>sinon,</a>, <a class='category' href='/blog/categories/testing-/'>testing,</a>, <a class='category' href='/blog/categories/tools/'>tools</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
+    <a class='category' href='/blog/categories/jasmine/'>jasmine,</a>, <a class='category' href='/blog/categories/sinon/'>sinon,</a>, <a class='category' href='/blog/categories/testing/'>testing,</a>, <a class='category' href='/blog/categories/tools/'>tools</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
   
 </span>
 
@@ -285,7 +297,7 @@ jasmine-node spec
         <a class="basic-alignment left" href="/titanium-mobile-flexibility-vs-performance/" title="Previous Post: Titanium Mobile: Flexibility vs. Performance">&laquo; Titanium Mobile: Flexibility vs. Performance</a>
       
       
-        <a class="basic-alignment right" href="/introducing-tiprofiler-for-ios/" title="next Post: Introducing TiProfiler for iOS">Introducing TiProfiler for iOS &raquo;</a>
+        <a class="basic-alignment right" href="/introducing-tiprofiler-for-ios/" title="Next Post: Introducing TiProfiler for iOS">Introducing TiProfiler for iOS &raquo;</a>
       
     </p>
   </footer>
@@ -311,6 +323,10 @@ jasmine-node spec
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/ticonf-2013-and-new-titanium-modules/">tiConf 2013 and new Titanium modules</a>
+      </li>
+    
+      <li class="post">
         <a href="/introducing-tiprofiler-for-ios/">Introducing TiProfiler for iOS</a>
       </li>
     
@@ -324,10 +340,6 @@ jasmine-node spec
     
       <li class="post">
         <a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash one-liner for renaming high-res image files to @2x</a>
-      </li>
-    
-      <li class="post">
-        <a href="/profiling-ti-mobile-apps-is-it-possible/">Profiling Ti Mobile apps: is it possible?</a>
       </li>
     
   </ul>
@@ -352,12 +364,12 @@ jasmine-node spec
 </section>
 
 <section>
-  <h1>Github Repos</h1>
+  <h1>GitHub Repos</h1>
   <ul id="gh_repos">
     <li class="loading">Status updating...</li>
   </ul>
   
-  <a href="https://github.com/omorandi">@omorandi</a> on Github
+  <a href="https://github.com/omorandi">@omorandi</a> on GitHub
   
   <script type="text/javascript">
     $.domReady(function(){
@@ -373,8 +385,7 @@ jasmine-node spec
             user: 'omorandi',
             count: 3,
             skip_forks: true,
-            target: '#gh_repos',
-            to_hide: ['omorandi.github.com', 'TiImageSlices']
+            target: '#gh_repos'
         });
     });
   </script>
@@ -394,7 +405,7 @@ jasmine-node spec
   </script>
   <script src="/javascripts/twitter.js" type="text/javascript"> </script>
   
-    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-width="208px" data-show-count="false">Follow @olivier_morandi</a>
+    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-show-count="false">Follow @olivier_morandi</a>
   
 </section>
 
@@ -406,7 +417,7 @@ jasmine-node spec
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - TiNinja -
+  Copyright &copy; 2013 - TiNinja -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
@@ -418,8 +429,8 @@ jasmine-node spec
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i';
-        var disqus_url = 'http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i';
+        var disqus_identifier = 'http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/';
+        var disqus_url = 'http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/';
         var disqus_script = 'embed.js';
       
     (function () {
