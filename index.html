@@ -9,7 +9,7 @@
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Courtesy Tipsy &amp; Tumbler Ltd Almost two weeks ago I had the pleasure to attend tiConf 2013 in Valencia, where, besides getting in touch with lots &hellip;">
+  <meta name="description" content="With this post I&#8217;d like to introduce a tool I&#8217;ve been working on in the last few months, which allows debugging Titanium apps running in &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +78,42 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/debugging-titanium-apps-with-chrome-devtools/">Debugging Titanium Apps With Chrome DevTools</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-13T18:23:00+02:00" pubdate data-updated="true">Jul 13<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>With this post I&#8217;d like to introduce a tool I&#8217;ve been working on in the last few months, which allows debugging Titanium apps running in the iOS simulator through the awesome Chrome DevTools debugging interface.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -540,49 +576,6 @@ jasmine-node spec
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash One-liner for Renaming High-res Image Files to @2x</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-21T13:54:00+01:00" pubdate data-updated="true">Mar 21<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>This tip may be useful to iOS developers when they&#8217;re given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
-
-<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
-
-<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
-</code></pre>
-
-<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/post/page/2/">&larr; Older</a>
@@ -601,6 +594,10 @@ jasmine-node spec
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/debugging-titanium-apps-with-chrome-devtools/">Debugging Titanium Apps with Chrome DevTools</a>
+      </li>
+    
+      <li class="post">
         <a href="/ticonf-2013-and-new-titanium-modules/">tiConf 2013 and new Titanium modules</a>
       </li>
     
@@ -614,10 +611,6 @@ jasmine-node spec
     
       <li class="post">
         <a href="/titanium-mobile-flexibility-vs-performance/">Titanium Mobile: Flexibility vs. Performance</a>
-      </li>
-    
-      <li class="post">
-        <a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash one-liner for renaming high-res image files to @2x</a>
       </li>
     
   </ul>

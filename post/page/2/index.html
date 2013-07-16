@@ -9,7 +9,7 @@
   <meta name="author" content="TiNinja">
 
   
-  <meta name="description" content="Short answer is: &#8220;YES&#8221; (at least on iOS - for now), and this post is here to share some very early results for supporting such statement &hellip;">
+  <meta name="description" content="This tip may be useful to iOS developers when they&#8217;re given a bunch of high-resolution files and they need to rename them with the @2x filename &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +78,49 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash One-liner for Renaming High-res Image Files to @2x</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-21T13:54:00+01:00" pubdate data-updated="true">Mar 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>This tip may be useful to iOS developers when they&#8217;re given a bunch of high-resolution files and they need to rename them with the <strong><em>@2x</em></strong> filename suffix.</p>
+
+<p>Supposing the files are all in the same directory (containing only the files you need to rename), just do this in the terminal:</p>
+
+<pre><code>for file in *; do mv "$file" "${file%.*}@2x.${file##*.}"; done
+</code></pre>
+
+<p>As a result, the files will all be renamed following the pattern <code>&lt;name&gt;@2x.&lt;extension&gt;</code>.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -479,146 +522,6 @@ This step generates the <code>build/iphone/Classes/ApplicationRouting.m</code> f
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/post/10360108035/titanium-hack-fastdev-for-ios">Titanium Hack: FastDev for iOS</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-09-18T00:00:00+02:00" pubdate data-updated="true">Sep 18<span>th</span>, 2011</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Testing large Titanium Mobile applications on iOS devices can be cumbersome, since the build &amp; deploy process can take several minutes, even when the project is launched directly from XCode. Repeating the same process each time, for checking the effect of small modifications to the code is then quite annoying and time consuming.</p>
-
-
-
-<p>I just posted a small project on github at <a href="https://github.com/omorandi/TiiOSFastDev"><a href="https://github.com/omorandi/TiiOSFastDev">https://github.com/omorandi/TiiOSFastDev</a></a> that aims at solving this issue.</p>
-
-
-
-<p>It is a quite hackish solution that allows you to change on the fly the application resource files of your project and get them pulled by your app (either on device or simulator) without needing to rebuild it, sign it, and re-deploy it.</p>
-
-
-
-<p>The solution consists in a bunch of scripts that perform these operations:</p>
-
-
-
-<ol><li><p> patch your Titanium SDK folder (or, better, a copy of it)</p></li>
-
-<li><p>start an HTTP server in the Resources directory of your Titanium Mobile project</p></li>
-
-</ol><p>Once these steps are completed, you can build your app and deploy it to the device for testing. Should you find you need to fix some of your program files, just do it, manually restart the app, and proceed with testing, without needing to rebuild &amp; redeploy it.</p>
-
-
-
-<p>This process is similar to the one involved using the fastdev feature for Android, however the mechanism is not managed by Titanium Studio, and involves a series of steps to be performed manually.</p>
-
-
-
-<p>The Ti SDK patching script expects you to work with a 1.8.X Titanium Mobile SDK. It can be modified in order to work with 1.7.X versions, however this is not currently supported.</p>
-
-
-
-<p>The http server is implemented as a simple node js script, so for executing it you need a working node environment in your system (you can grab it from <a href="http://nodejs.org/"><a href="http://nodejs.org/">http://nodejs.org/</a></a> ).</p>
-
-
-
-<h1>How to use it</h1>
-
-
-
-<p>First, check out the <a href="https://github.com/omorandi/TiiOSFastDev">TiiOSFastDev repository</a>  from github.</p>
-
-
-
-<p>In the following steps I use the following symbols for the involved directories:</p>
-
-
-
-<pre><code>$TI_FASTDEV_DIR (the directory containing this repository)
-
-$TI_SDK_DIR (usually /Library/Application\ Support/Titanium)
-
-$PRJ_DIR (The root directory of your Ti Mobile App project)
-
-</code></pre>
-
-
-
-<ol><li><p>Check out your Titanium Mobile directory under <code>$TI_SDK_DIR</code>. There you&#8217;ll find one or more directories of the SDKs installed in your system.</p></li>
-
-<li><p>Create a copy of the SDK directory you want to patch and call it for example <code>1.8.0-fastdev</code> (actually you&#8217;ll want to keep the original SDK directory intact for the normal development workflow)</p></li>
-
-<li><p>In a terminal window, go to the directory that contains the files of this repository (<code>$TI_FASTDEV_DIR</code>) and perform the following:</p>
-
-
-
-<p><code>./patch.sh 1.8.0-fastdev</code></p></li>
-
-<li><p>Launch your Ti Mobile application from Titanium Studio or through your preferred method. This is needed in order to re-create the <code>build/iphone</code> directory in your project, with the patched files. If this doesn&#8217;t happen, just clean the project and relaunch it</p></li>
-
-<li><p>For your convenience, create an alias for the <code>startserver.py</code>script:</p>
-
-
-
-<p><code>alias fdstart='$TI_FASTDEV_DIR/startserver.py'</code></p></li>
-
-<li><p>Then <code>cd</code> in the <code>Resources</code> directory of your Titanium Mobile application project, for example:</p>
-
-
-
-<p><code>cd $PRJ_DIR/Resources</code></p></li>
-
-<li><p>Using the previously created alias, you can start the server with:</p>
-
-
-
-<p><code>fdstart</code></p></li>
-
-<li><p>That&#8217;s it, you can now restart the application from Ti Studio (if you want to use the simulator), deploy it on the device, or, better, build the app for device in XCode (by opening the XCode project you find in <code>$PRJ_DIR/build/iphone</code>, sign the product and install it on device. From now on your application JS files are pulled through the server you started in the <code>Resources</code> directory of your project.</p></li>
-
-<li><p>Enjoy the time you have saved with this hack ;-)</p></li>
-
-</ol><h1>Demo video</h1>
-
-
-
-<p>I made a demo for showing how this hack can be used. Please note that when launching the project from XCode I select the Simulator target only for convenience (it&#8217;s not that easy to show the iphone screen output in a screencast):</p>
-
-
-
-<iframe src="http://player.vimeo.com/video/29218138?title=0&amp;byline=0&amp;portrait=0" width="400" height="300" frameborder="0" webkitallowfullscreen allowfullscreen></iframe>
-
-
-
-<p><a href="http://vimeo.com/29218138">Titanium Mobile iOS FastDev hack demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/post/page/3/">&larr; Older</a>
@@ -639,6 +542,10 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/debugging-titanium-apps-with-chrome-devtools/">Debugging Titanium Apps with Chrome DevTools</a>
+      </li>
+    
+      <li class="post">
         <a href="/ticonf-2013-and-new-titanium-modules/">tiConf 2013 and new Titanium modules</a>
       </li>
     
@@ -652,10 +559,6 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
     
       <li class="post">
         <a href="/titanium-mobile-flexibility-vs-performance/">Titanium Mobile: Flexibility vs. Performance</a>
-      </li>
-    
-      <li class="post">
-        <a href="/bash-one-liner-for-renaming-high-res-image-files-to-at-2x/">Bash one-liner for renaming high-res image files to @2x</a>
       </li>
     
   </ul>

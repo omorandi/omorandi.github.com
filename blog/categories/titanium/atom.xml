@@ -4,7 +4,7 @@
   <title><![CDATA[Category: titanium, | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/titanium/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-03-08T14:39:28+01:00</updated>
+  <updated>2013-07-16T09:44:50+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -12,6 +12,15 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Debugging Titanium Apps with Chrome DevTools]]></title>
+    <link href="http://titaniumninja.com/debugging-titanium-apps-with-chrome-devtools/"/>
+    <updated>2013-07-13T18:23:00+02:00</updated>
+    <id>http://titaniumninja.com/debugging-titanium-apps-with-chrome-devtools</id>
+    <content type="html"><![CDATA[<p>With this post I'd like to introduce a tool I've been working on in the last few months, which allows debugging Titanium apps running in the iOS simulator through the awesome Chrome DevTools debugging interface.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[tiConf 2013 and new Titanium modules]]></title>
