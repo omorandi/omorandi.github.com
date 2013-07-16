@@ -4,7 +4,7 @@
   <title><![CDATA[Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:34:03+02:00</updated>
+  <updated>2013-07-16T15:38:03+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -20,10 +20,10 @@
     <id>http://titaniumninja.com/debugging-titanium-apps-with-chrome-devtools</id>
     <content type="html"><![CDATA[<p>My Titanium/iOS development workflow mainly revolves around using Sublime Text for code editing, and the Titanium CLI and Xcode for testing/deployment/debugging. However, sometimes this setup isn&#8217;t sufficient, especially when I need to inspect what happens in an application at the JavaScript level. In these cases there are basically two choices:</p>
 
-<ol>
+<ul>
 <li>fill the code with logging statements</li>
 <li>use the JavaScript debugger integrated in Titanium Studio</li>
-</ol>
+</ul>
 
 
 <p>It turns out that there are times when none of these techniques is satisfying: using logging statements is a quick and dirty technique, but it can lead to long modify/rebuild/test iterations, before finally finding the right spot in the code that&#8217;s causing an issue. Using a proper debugger, like the one provided by Ti Studio is surely the way to go in most cases, however, switching back to Studio just for debugging can be a painfully slow operation. In other words, I needed a more &#8220;agile&#8221; way to start a debugging session.</p>
@@ -36,18 +36,17 @@
 
 <p>On the other side we have our Titanium application running (e.g. on the iOS simulator), which integrates a debugger agent that is able to interact with the engine used for executing our JavaScript code (e.g. JavaScriptCore on iOS). If enabled, the debugger agent expects to communicate through a <a href="http://docs.appcelerator.com/titanium/latest/#!/guide/Debugger_Protocol-section-30083170_DebuggerProtocol-Variablepropertyflags">TCP-based protocol</a> with its front-end counterpart, which is normally represented by the Titanium Studio debugger interface. Titanium Studio silently enables this mechanism when we build for debugging, by appending a <code>--debug-host</code> argument to the Titanium CLI invocation, for example:</p>
 
-<p><del>
-titanium build &#8211;platform ios &#8211;debug-host localhost:54321
-</del></p>
+<pre><code>titanium build --platform ios --debug-host localhost:54321
+</code></pre>
 
 <p>Ti Inspector is the tool that allows these two worlds to successfully communicate, acting as a gateway between the Chrome DevTools remote debugging protocol and the Titanium debugger protocol. It does so by the means of a node.js based application, which implements the following mechanisms:</p>
 
-<ol>
+<ul>
 <li>It serves the DevTools web app from the default port 8080</li>
 <li>It listens for tcp connections on the default port 8999, where the Ti debugger agent will connect once the app starts</li>
 <li>It accepts websocket connections from the DevTools app</li>
 <li>Once both the debugger agent and DevTools app are connected, Ti Inspector translates commands, replies and asynchronous events from one protocol to the other, doing additional book-keeping and translating the descriptors of the necessary model elements (i.e. scripts, breakpoints, stack frames, variables, etc.).</li>
-</ol>
+</ul>
 
 
 <p>With this post I&#8217;d like to introduce a tool I&#8217;ve been working on in the last few months, which allows debugging Titanium apps running in the iOS simulator through the awesome Chrome DevTools debugging interface.</p>
@@ -56,32 +55,20 @@ titanium build &#8211;platform ios &#8211;debug-host localhost:54321
 
 <p>Ti Inspector is a node.js module, so as a basic prerequisite a working node.js setup is needed, then we can use npm for installing it globally:</p>
 
-<p>~~~</p>
-
 <pre><code>$ [sudo] npm install -g ti-inspector
 </code></pre>
 
-<p>~~~</p>
-
 <p>Once installed, we can <code>cd</code> to any Titanium Mobile application project directory and launch the <code>ti-inspector</code> command:</p>
-
-<p>~~~</p>
 
 <pre><code>$ cd /path/to/your/titanium/project/directory
 $ ti-inspector
 </code></pre>
 
-<p>~~~</p>
-
 <p>doing so, a web server starts listening on port 8080, and a debug server is attached to TCP port 8999.
 Pointing a browser on <code>localhost:8080</code> we&#8217;ll get a page with a brief description of our application, telling that no active debug sessions are active. At this point, we can start our application through the Titanium CLI, specifying that the debug agent running in the app will need to connect to port 8999 on the localhost, for example:</p>
 
-<p>~~~</p>
-
 <pre><code>$ titanium build -p iphone --tall --retina --debug-host localhost:8999
 </code></pre>
-
-<p>~~~</p>
 
 <p>Once the app will start in the iOS Simulator, the debugger will connect with Ti Inspector and a new debugging session will be created. In the browser we can then start the DevTools app and start debugging.</p>
 
