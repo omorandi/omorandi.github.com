@@ -4,7 +4,7 @@
   <title><![CDATA[Category: debugger, | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/debugger/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:38:03+02:00</updated>
+  <updated>2013-07-16T15:58:52+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -48,8 +48,6 @@
 <li>Once both the debugger agent and DevTools app are connected, Ti Inspector translates commands, replies and asynchronous events from one protocol to the other, doing additional book-keeping and translating the descriptors of the necessary model elements (i.e. scripts, breakpoints, stack frames, variables, etc.).</li>
 </ul>
 
-
-<p>With this post I'd like to introduce a tool I've been working on in the last few months, which allows debugging Titanium apps running in the iOS simulator through the awesome Chrome DevTools debugging interface.</p>
 
 <h2>How to use it</h2>
 
