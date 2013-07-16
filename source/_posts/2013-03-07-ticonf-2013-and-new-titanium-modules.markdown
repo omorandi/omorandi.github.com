@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "tiConf 2013 and new Titanium modules"
-date: 2013-03-08 14:38
+date: 2013-03-07 16:55
 comments: true
 categories: ticonf, ios, module, titanium, presentation
 ---
