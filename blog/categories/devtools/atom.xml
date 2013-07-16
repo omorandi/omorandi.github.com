@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: debugger, | Titanium Ninja]]></title>
-  <link href="http://titaniumninja.com/blog/categories/debugger/atom.xml" rel="self"/>
+  <title><![CDATA[Category: devtools | Titanium Ninja]]></title>
+  <link href="http://titaniumninja.com/blog/categories/devtools/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
   <updated>2013-07-16T15:29:58+02:00</updated>
   <id>http://titaniumninja.com/</id>
