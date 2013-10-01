@@ -9,9 +9,9 @@ categories: [Titanium Mobile, iOS, JavaScriptCore, profiling]
 Short answer is: "YES" (at least on iOS - for now), and this post is here to share some very early results for supporting such statement. What's reported here is just something I started working on in the last few weeks and it's still a quite long term work in progress.
 
 ## Profiling tools
-Profiling means measuring how much time is spent in every relevant portion of code of an application during its execution, and it represents the first step to be done when searching for spots in the code that can be optimized, in order to achieve better performance. Performing any form of optimization without profiling first is like running a race with blinded eyes. 
+Profiling means measuring how much time is spent in every relevant portion of code of an application during its execution, and it represents the first step to be done when searching for spots in the code that can be optimized, in order to achieve better performance. Performing any form of optimization without profiling first is like running a race with blinded eyes.
 
-So, what does it mean profiling a Titanium Mobile application written in JavaScript? What tools do we have? How can we find hotspots in our poorly behaving apps? The reality is that unlike other development enviroments, the Titanium Mobile SDK doesn't provide any tool for accurately profiling JS apps. 
+So, what does it mean profiling a Titanium Mobile application written in JavaScript? What tools do we have? How can we find hotspots in our poorly behaving apps? The reality is that unlike other development enviroments, the Titanium Mobile SDK doesn't provide any tool for accurately profiling JS apps.
 When developing for iOS, we can use the Instruments profiling tool provided with Xcode, and the typical results obtained using such tool are shown in the following picture:
 
 {% img center /images/posts/XcodeProfilingTool.png %}
@@ -23,7 +23,7 @@ On the other hand, developers coming from web development may be used to working
 {% img center /images/posts/ChromeProfiling.png %}
 
 ## Profiling Ti apps
-Since I need to profile a quite complex Titanium Mobile application for finding hotspots in the code that may need to be offloaded to some native modules, I started guessing how could I achieve my goal. As usual, digging into the Ti SDK code helps a lot, and after following the white rabbit in the hole I found the response in the code of the JavaScriptCore interpreter. We always have to remember that Titanium Mobile shares its core engines with Safari and Chrome, i.e. JavaScriptCore and V8 respectively, so any low level feature tied to JS execution available in these browsers is also available in Titanium, moreover all that code is completely available as open source. So, it turns out that most of the features needed for profiling JS code are exactly where they should be, i.e. in the interpreter. 
+Since I need to profile a quite complex Titanium Mobile application for finding hotspots in the code that may need to be offloaded to some native modules, I started guessing how could I achieve my goal. As usual, digging into the Ti SDK code helps a lot, and after following the white rabbit in the hole I found the response in the code of the JavaScriptCore interpreter. We always have to remember that Titanium Mobile shares its core engines with Safari and Chrome, i.e. JavaScriptCore and V8 respectively, so any low level feature tied to JS execution available in these browsers is also available in Titanium, moreover all that code is completely available as open source. So, it turns out that most of the features needed for profiling JS code are exactly where they should be, i.e. in the interpreter.
 
 For those who wonder how a profiler works, it's easy told. The profiler is nothing more than a component that records the time when each function gets called and when it returns. Whenever the interpreter needs to execute a function, it tells the profiler: "I'm going to execute function F, which starts at line X of file at URL Y". The same just after the execution of the function: "I executed Function F, bla bla". This allows the profiler to have a clear vision on two very important kinds of information:
 
@@ -34,17 +34,52 @@ Obviously, the total time spent in a function will also include the time spent i
 
 So, during my journey, I managed to [build the JavaScriptCore library from scratch](/2012-03-02-building-titanium-mobile-jscore-from-source) and I started tweaking the code in order to be able to start and stop the profiling from the native code of a Titanium application. I had a quite encouraging success a couple of weeks ago and tweeted about it:
 
-<blockquote class="twitter-tweet"><p>YAY! got JSCore profiler running in Ti Mobile on iOS! Still work to be done for extracting useful info, though - <a href="https://t.co/yXtItEwS" title="https://skitch.com/omorandi/8ggw7/xcode">skitch.com/omorandi/8ggw7…</a></p>&mdash; Olivier Morandi (@olivier_morandi) <a href="https://twitter.com/olivier_morandi/status/175231374662443010" data-datetime="2012-03-01T14:49:50+00:00">March 1, 2012</a></blockquote>
+<center><blockquote class="twitter-tweet"><p>YAY! got JSCore profiler running in Ti Mobile on iOS! Still work to be done for extracting useful info, though - <a href="https://t.co/yXtItEwS" title="https://skitch.com/omorandi/8ggw7/xcode">skitch.com/omorandi/8ggw7…</a></p>&mdash; Olivier Morandi (@olivier_morandi) <a href="https://twitter.com/olivier_morandi/status/175231374662443010" data-datetime="2012-03-01T14:49:50+00:00">March 1, 2012</a></blockquote></center>
+
 <script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Actually I was happy about the integration, but no real profiling data was returned. After studying more deeply the code and a lot of debugging, today I've been able to produce a  more meaningful profile of a test application, which is composed of a barebone `app.js` file: 
-	
-<script src="https://gist.github.com/2029449.js?file=app.js"></script>
+Actually I was happy about the integration, but no real profiling data was returned. After studying more deeply the code and a lot of debugging, today I've been able to produce a  more meaningful profile of a test application, which is composed of a barebone `app.js` file:
+
+``` javascript app.js
+Ti.include('included.js');
+
+function launch_test1() {
+    test1();
+}
+
+function launch_test2() {
+    test2();
+}
+
+launch_test1();
+launch_test2();
+```
 
 
 and a module containing a couple of functions performing some useless math tasks. The module is suitable to be either included via `Ti.include()`, or required through CommonJS `require()`:
 
-<script src="https://gist.github.com/2029449.js?file=included.js"></script>
+``` javascript included.js
+var exports = exports || {};
+
+function test1() {
+    var sum = 0;
+    for (var i = 0; i < 1000000; i++) {
+        sum = sum + Math.cos(i);
+    }
+    Ti.API.info('result 1: ' + sum);
+}
+
+var test2 = function() {
+    var sum = 0;
+    for (var i = 0; i < 1000000; i++) {
+        sum += Math.sin(i/1000);
+    }
+    Ti.API.info('result 2: ' + sum);
+};
+
+exports.test1 = test1;
+exports.test2 = test2;
+```
 
 Please note that the two test functions in `included.js` are defined in different ways. The first is defined as a **named function** `test1()`, while the other is defined as an **anonymous function**, which is assigned to the variable `test2`.
 
