@@ -3,7 +3,7 @@ layout: post
 title: "Introducing TiProfiler for iOS"
 date: 2012-07-27 16:35
 comments: true
-categories: iOS, Titanium Mobile, profiling, tools
+categories: [iOS, Titanium Mobile, profiling, tools]
 ---
 
 Around four months ago I started experimenting with some [custom modifications](http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible/) to the  JavaScriptCore library, which is the JavaScript engine used by the Titanium Mobile SDK for executing Titanium applications on iOS. After succeeding in enabling the profiler component provided by JSCore and extracting some relevant profiling data from running applications, I wanted a tool that would allow me to show such information in a manageable way, like the Web Inspector and Developer tools allow to do in Safari or Chrome.
@@ -12,12 +12,12 @@ My basic requirements were the following:
 
 * The tool needed to be able to start and stop the profiler running alongside a Titanium Mobile application executed on the iOS Simulator, as well as to retrieve the collected profiling data
 * The GUI app should be very simple and quick and easy to develop: a web app would be good enough
-* I wanted to be able to show the profiling data (i.e. a function call tree showing the amount of time spent in each function) in the typical expandable tree grid 
+* I wanted to be able to show the profiling data (i.e. a function call tree showing the amount of time spent in each function) in the typical expandable tree grid
 * I wanted to be able to quickly show the source code of every referenced function, in order to better understand the data every time an anonymous function was reported
 
 So I started creating a very simple web-based GUI and a node.js server component providing a proxy between the client app and the profiler, and today I'm able to introduce some results, with the following demo screencast:
 
-<iframe src="http://player.vimeo.com/video/46148981" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/46148981">TiProfiler demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+<center><iframe src="http://player.vimeo.com/video/46148981" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/46148981">TiProfiler demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p></center>
 
 This has been possible thanks to the following technologies/libraries:
 
@@ -31,7 +31,7 @@ The screencast showcases the usage of the three main components involved:
 * The GUI app itself
 * The Titanium Mobile application, built and executed through a custom version of the 2.1.0.GA Titanium SDK, with all the required additions to make the magic possible
 
-The node server gets notified when the Titanium application and the profiler are started, re-broadcasting such events. 
+The node server gets notified when the Titanium application and the profiler are started, re-broadcasting such events.
 The web-app, on the other side, issues start & stop commands to the node server, which reflects them to the profiler running inside of the Ti app.
 
 At the core of the system lies a custom version of the TiJSCore library, and some very limited additions to the inner workings of the Titanium Kroll bridge. In particular, besides the basic modifications already mentioned in the [previous post](http://titaniumninja.com/profiling-ti-mobile-apps-is-it-possible), it has been necessary to do the following:

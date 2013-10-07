@@ -3,10 +3,10 @@ layout: post
 title: "tiConf 2013 and new Titanium modules"
 date: 2013-03-07 16:55
 comments: true
-categories: ticonf, ios, module, titanium, presentation
+categories: [ticonf, ios, module, titanium, presentation]
 ---
 
-<center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="500" height="333" alt="@oliviermorandi Discusses native module creation"></a><br>Courtesy <a href="http://www.tipsyandtumbler.co.uk/">Tipsy &amp; Tumbler Ltd</a>
+<center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="640" height="480" alt="@oliviermorandi Discusses native module creation"></a><br>Courtesy <a href="http://www.tipsyandtumbler.co.uk/">Tipsy &amp; Tumbler Ltd</a>
 </center>
 <br>
 
@@ -14,7 +14,7 @@ categories: ticonf, ios, module, titanium, presentation
 
 Almost two weeks ago I had the pleasure to attend [tiConf 2013](http://ticonf.eu) in Valencia, where, besides getting in touch with lots of awesome developers from all over the world, I held a workshop on native module development for Titanium on both iOS and Android platforms. Here's the presentation:
 
-<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
 
 
 <br>

@@ -2,25 +2,18 @@
 // To give it a try, uncomment some of the lines below rebuild your blog, and see how it works.
 // If you need a handy color picker try http://hslpicker.com
 
-$header-bg: saturate(#561A1A, 3);
-$title-color: #fffffe !default;
-$subtitle-color: #ddd !default;
-
+$header-bg: #abc;
 //$subtitle-color: lighten($header-bg, 58);
-$nav-bg: desaturate(lighten(#CFC8AA, 18), 5);
-$nav-bg-front: image-url('noise.png');
-$nav-bg-back: linear-gradient(lighten($nav-bg, 8), $nav-bg, darken($nav-bg, 11));
+//$nav-bg: desaturate(lighten(#8fc17a, 18), 5);
+//$nav-bg-front: image-url('noise.png');
+//$nav-bg-back: linear-gradient(lighten($nav-bg, 8), $nav-bg, darken($nav-bg, 11));
 //$sidebar-bg: desaturate(#eceff5, 8);
 //$sidebar-link-color: saturate(#526f9a, 10);
 //$sidebar-link-color-hover: darken(#7ab662, 9);
 //$footer-bg: #ccc !default;
 //$footer-bg-front: image-url('noise.png');
-//$footer-bg-back: linear-gradient(lighten($footer-bg, 8), $footer-bg, darken($footer-
+//$footer-bg-back: linear-gradient(lighten($footer-bg, 8), $footer-bg, darken($footer-bg, 11));
 
-$main-bg: #fff !default;
-$page-bg: #777 !default;
-
-$link-color: $header-bg;
 
 /* To use the light Solarized highlighting theme uncomment the following line */
 //$solarized: light;

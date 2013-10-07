@@ -3,7 +3,7 @@ layout: post
 title: "Debugging Titanium Apps with Chrome DevTools"
 date: 2013-07-13 18:23
 comments: true
-categories: titanium, debugger, ios, devtools
+categories: [titanium, debugger, ios, devtools]
 ---
 
 
@@ -23,7 +23,7 @@ How was this possible? Actually, the [DevTools panel](https://developers.google.
 On the other side we have our Titanium application running (e.g. on the iOS simulator), which integrates a debugger agent that is able to interact with the engine used for executing our JavaScript code (e.g. JavaScriptCore on iOS). If enabled, the debugger agent expects to communicate through a [TCP-based protocol](http://docs.appcelerator.com/titanium/latest/#!/guide/Debugger_Protocol-section-30083170_DebuggerProtocol-Variablepropertyflags) with its front-end counterpart, which is normally represented by the Titanium Studio debugger interface. Titanium Studio silently enables this mechanism when we build for debugging, by appending a `--debug-host` argument to the Titanium CLI invocation, for example:
 
 
-	titanium build --platform ios --debug-host localhost:54321
+	$ titanium build --platform ios --debug-host localhost:54321
 
 Ti Inspector is the tool that allows these two worlds to successfully communicate, acting as a gateway between the Chrome DevTools remote debugging protocol and the Titanium debugger protocol. It does so by the means of a node.js based application, which implements the following mechanisms:
 
@@ -57,7 +57,7 @@ Once the app will start in the iOS Simulator, the debugger will connect with Ti 
 
 Anyway, sometimes a screencast is better then thousand words, so you can check out this short demo:
 
-<iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
+<center><iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p></center>
 
 ## Features
 
@@ -79,9 +79,9 @@ Ti Inspector is currently at an alpha stage of development. Some features are st
 For completeness, some of the current limitations are the following:
 
 * Android is not currently supported: for debugging Android Apps, Titanium Studio does more heavy lifting and the Ti debugger protocol is somewhat translated into the V8 debugging protocol by an internal component. This means that supporting Android will mean implementing the [V8 remote debugging protocol](https://code.google.com/p/v8/wiki/DebuggerProtocol) in Ti Inspector. This is something I'll likely work on in the near future
-* On device debugging is not supported since it's treated in a special way by the CLI and Studio. 
+* On device debugging is not supported since it's treated in a special way by the CLI and Studio.
 * Expressions can only be evaluated when the execution is suspended
 
 ## Source code
 The source code is completely available [on GitHub](https://github.com/omorandi/TiInspector) under the MIT license. Issue postings and pull requests are very welcome.
- 
+
