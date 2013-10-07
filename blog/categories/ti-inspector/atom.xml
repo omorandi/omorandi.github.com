@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: ti-inspector | Titanium Ninja]]></title>
+  <link href="http://titaniumninja.com/blog/categories/ti-inspector/atom.xml" rel="self"/>
+  <link href="http://titaniumninja.com/"/>
+  <updated>2013-10-07T17:50:17+02:00</updated>
+  <id>http://titaniumninja.com/</id>
+  <author>
+    <name><![CDATA[TiNinja]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[On-device debugging with Xcode and Ti Inspector]]></title>
+    <link href="http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector/"/>
+    <updated>2013-10-07T11:25:00+02:00</updated>
+    <id>http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector</id>
+    <content type="html"><![CDATA[<p>If you enjoy using <a href="/debugging-titanium-apps-with-chrome-devtools/">Ti Inspector</a> for debugging and inspecting the state of your Titanium apps in the iOS simulator, you've probably wondered if it would be possible doing the same for apps executed on device. Actually, the way the Ti SDK builds up the connection between the running app and the debugging server implemented in Titanium Studio prevents this to happen in a seamless way when using Ti Inspector. Moreover the client component of the debugger (i.e. the one that is executed within the app) is implemented in a closed source library (<code>libti_ios_debugger.a</code>), making it somewhat hard to create a server component that can seamlessly replace the Titanium Studio debugging server. I must say that I didn't bother to investigate the issue in too much detail, and I'm working on a different kind of solution involving the use of a custom native module.</p>
+
+<p>Anyway, while the module-based solution is not yet ready, I'd like to share a rather simple way to use Ti Inspector with an app running on an iOS device, even if the required steps might appear a bit convoluted at a first sight. This involves launching the application through Xcode, and using its powerful <a href="https://developer.apple.com/library/ios/recipes/xcode_help-breakpoint_navigator/articles/setting_breakpoint_actions_and_options.html#//apple_ref/doc/uid/TP40010433-CH3-SW1">conditional breakpoints</a>. In particular, Xcode allows setting breakpoints in your application source code, which are triggered only if the specified condition is met. Moreover we can attach specific actions to be executed right after the breakpoint has been hit, as well as enabling the program to resume right away, without interrupting its normal flow.</p>
+
+<p>The most useful among the available actions that can be attached to a breakpoint are "Log Message" and "Debugger Command". These can be of great help for printing out the state of some variables in our code during its execution, allowing us to add debug log statements at runtime, without even touching the code.</p>
+
+<p>So, without further ado, let's see how to build our app through Xcode, allowing it to work with Ti Inspector.</p>
+
+<p>First, we need to build the app through Ti Studio or the CLI for running it through the iOS simulator:</p>
+
+<pre><code>$ titanium build -p iphone
+</code></pre>
+
+<p>Then we need to get the IP address of our development machine on our WiFi network (e.g. en1 interface on a MacBook Pro):</p>
+
+<pre><code>$ ifconfig en1
+</code></pre>
+
+<p>We'll get something like:</p>
+
+<pre><code>en1: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+    ether xx:xx:xx:xx:xx:xx
+    inet 192.168.1.3 netmask 0xffffff00 broadcast 192.168.1.255
+    nd6 options=1&lt;PERFORMNUD&gt;
+    media: autoselect
+    status: active
+</code></pre>
+
+<p>The current IP address assigned to the WiFi interface in this case is <code>192.168.1.3</code></p>
+
+<p>We can now open the Xcode project:</p>
+
+<pre><code>$ open build/iphone/name_of_your_app.xcodeproj
+</code></pre>
+
+<p>We'll have to add a couple of breakpoints in <code>TiApp.m</code>, in the <code>-(void)boot</code> method (starting at line 187 in Ti SDK 3.1.3.GA), where the connection with the debugger server is initiated. In particular, we need to fake the presence of a <code>debugger.plist</code> file, then we can set the two <code>host</code> and <code>port</code> parameters where the Ti Inspector debug server is listening, i.e. the IP address we retrieved before (e.g. <code>192.168.1.3</code>) and for example the default <code>8999</code> port.</p>
+
+<p>For setting the required values we use the <code>expr</code> <a href="http://lldb.llvm.org/tutorial.html">lldb command</a> for evaluating expressions in the debugger, so we edit the two breakpoints adding a "Debugger Command" action:</p>
+
+<h3>Add breakpoint and edit</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_edit_break.png"></p>
+
+<h3>Manipulate the filePath variable</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_file_break.png"></p>
+
+<h3>Set the debugger host and port</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_host_port_break.png"></p>
+
+<p>Once this setup phase is completed we can launch the application, by selecting the appropriate device target.</p>
+
+<p>As a side note, this mechanism also works for simulator targets, without the need to build the app through the CLI with the <code>--debug-host</code> option.</p>
+]]></content>
+  </entry>
+  
+</feed>

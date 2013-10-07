@@ -4,7 +4,7 @@
   <title><![CDATA[Category: devtools | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/devtools/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:58:52+02:00</updated>
+  <updated>2013-10-07T17:50:17+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -36,7 +36,7 @@
 
 <p>On the other side we have our Titanium application running (e.g. on the iOS simulator), which integrates a debugger agent that is able to interact with the engine used for executing our JavaScript code (e.g. JavaScriptCore on iOS). If enabled, the debugger agent expects to communicate through a <a href="http://docs.appcelerator.com/titanium/latest/#!/guide/Debugger_Protocol-section-30083170_DebuggerProtocol-Variablepropertyflags">TCP-based protocol</a> with its front-end counterpart, which is normally represented by the Titanium Studio debugger interface. Titanium Studio silently enables this mechanism when we build for debugging, by appending a <code>--debug-host</code> argument to the Titanium CLI invocation, for example:</p>
 
-<pre><code>titanium build --platform ios --debug-host localhost:54321
+<pre><code>$ titanium build --platform ios --debug-host localhost:54321
 </code></pre>
 
 <p>Ti Inspector is the tool that allows these two worlds to successfully communicate, acting as a gateway between the Chrome DevTools remote debugging protocol and the Titanium debugger protocol. It does so by the means of a node.js based application, which implements the following mechanisms:</p>
@@ -72,10 +72,8 @@ Pointing a browser on <code>localhost:8080</code> we'll get a page with a brief 
 
 <p>Anyway, sometimes a screencast is better then thousand words, so you can check out this short demo:</p>
 
-<iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+<center><iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p></center>
 
-
-<p> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p></p>
 
 <h2>Features</h2>
 

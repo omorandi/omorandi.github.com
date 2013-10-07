@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: bash, | Titanium Ninja]]></title>
+  <title><![CDATA[Category: bash | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/bash/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:58:52+02:00</updated>
+  <updated>2013-10-07T17:50:17+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>

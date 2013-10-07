@@ -4,7 +4,7 @@
   <title><![CDATA[Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:58:52+02:00</updated>
+  <updated>2013-10-07T17:50:17+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -12,6 +12,68 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[On-device debugging with Xcode and Ti Inspector]]></title>
+    <link href="http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector/"/>
+    <updated>2013-10-07T11:25:00+02:00</updated>
+    <id>http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector</id>
+    <content type="html"><![CDATA[<p>If you enjoy using <a href="http://titaniumninja.com/debugging-titanium-apps-with-chrome-devtools/">Ti Inspector</a> for debugging and inspecting the state of your Titanium apps in the iOS simulator, you&#8217;ve probably wondered if it would be possible doing the same for apps executed on device. Actually, the way the Ti SDK builds up the connection between the running app and the debugging server implemented in Titanium Studio prevents this to happen in a seamless way when using Ti Inspector. Moreover the client component of the debugger (i.e. the one that is executed within the app) is implemented in a closed source library (<code>libti_ios_debugger.a</code>), making it somewhat hard to create a server component that can seamlessly replace the Titanium Studio debugging server. I must say that I didn&#8217;t bother to investigate the issue in too much detail, and I&#8217;m working on a different kind of solution involving the use of a custom native module.</p>
+
+<p>Anyway, while the module-based solution is not yet ready, I&#8217;d like to share a rather simple way to use Ti Inspector with an app running on an iOS device, even if the required steps might appear a bit convoluted at a first sight. This involves launching the application through Xcode, and using its powerful <a href="https://developer.apple.com/library/ios/recipes/xcode_help-breakpoint_navigator/articles/setting_breakpoint_actions_and_options.html#//apple_ref/doc/uid/TP40010433-CH3-SW1">conditional breakpoints</a>. In particular, Xcode allows setting breakpoints in your application source code, which are triggered only if the specified condition is met. Moreover we can attach specific actions to be executed right after the breakpoint has been hit, as well as enabling the program to resume right away, without interrupting its normal flow.</p>
+
+<p>The most useful among the available actions that can be attached to a breakpoint are &#8220;Log Message&#8221; and &#8220;Debugger Command&#8221;. These can be of great help for printing out the state of some variables in our code during its execution, allowing us to add debug log statements at runtime, without even touching the code.</p>
+
+<p>So, without further ado, let&#8217;s see how to build our app through Xcode, allowing it to work with Ti Inspector.</p>
+
+<p>First, we need to build the app through Ti Studio or the CLI for running it through the iOS simulator:</p>
+
+<pre><code>$ titanium build -p iphone
+</code></pre>
+
+<p>Then we need to get the IP address of our development machine on our WiFi network (e.g. en1 interface on a MacBook Pro):</p>
+
+<pre><code>$ ifconfig en1
+</code></pre>
+
+<p>We&#8217;ll get something like:</p>
+
+<pre><code>en1: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+    ether xx:xx:xx:xx:xx:xx
+    inet 192.168.1.3 netmask 0xffffff00 broadcast 192.168.1.255
+    nd6 options=1&lt;PERFORMNUD&gt;
+    media: autoselect
+    status: active
+</code></pre>
+
+<p>The current IP address assigned to the WiFi interface in this case is <code>192.168.1.3</code></p>
+
+<p>We can now open the Xcode project:</p>
+
+<pre><code>$ open build/iphone/name_of_your_app.xcodeproj
+</code></pre>
+
+<p>We&#8217;ll have to add a couple of breakpoints in <code>TiApp.m</code>, in the <code>-(void)boot</code> method (starting at line 187 in Ti SDK 3.1.3.GA), where the connection with the debugger server is initiated. In particular, we need to fake the presence of a <code>debugger.plist</code> file, then we can set the two <code>host</code> and <code>port</code> parameters where the Ti Inspector debug server is listening, i.e. the IP address we retrieved before (e.g. <code>192.168.1.3</code>) and for example the default <code>8999</code> port.</p>
+
+<p>For setting the required values we use the <code>expr</code> <a href="http://lldb.llvm.org/tutorial.html">lldb command</a> for evaluating expressions in the debugger, so we edit the two breakpoints adding a &#8220;Debugger Command&#8221; action:</p>
+
+<h3>Add breakpoint and edit</h3>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/2013-10-07/xcode_edit_break.png"></p>
+
+<h3>Manipulate the filePath variable</h3>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/2013-10-07/xcode_file_break.png"></p>
+
+<h3>Set the debugger host and port</h3>
+
+<p><img class="center" src="http://titaniumninja.com/images/posts/2013-10-07/xcode_host_port_break.png"></p>
+
+<p>Once this setup phase is completed we can launch the application, by selecting the appropriate device target.</p>
+
+<p>As a side note, this mechanism also works for simulator targets, without the need to build the app through the CLI with the <code>--debug-host</code> option.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Debugging Titanium Apps with Chrome DevTools]]></title>
@@ -36,7 +98,7 @@
 
 <p>On the other side we have our Titanium application running (e.g. on the iOS simulator), which integrates a debugger agent that is able to interact with the engine used for executing our JavaScript code (e.g. JavaScriptCore on iOS). If enabled, the debugger agent expects to communicate through a <a href="http://docs.appcelerator.com/titanium/latest/#!/guide/Debugger_Protocol-section-30083170_DebuggerProtocol-Variablepropertyflags">TCP-based protocol</a> with its front-end counterpart, which is normally represented by the Titanium Studio debugger interface. Titanium Studio silently enables this mechanism when we build for debugging, by appending a <code>--debug-host</code> argument to the Titanium CLI invocation, for example:</p>
 
-<pre><code>titanium build --platform ios --debug-host localhost:54321
+<pre><code>$ titanium build --platform ios --debug-host localhost:54321
 </code></pre>
 
 <p>Ti Inspector is the tool that allows these two worlds to successfully communicate, acting as a gateway between the Chrome DevTools remote debugging protocol and the Titanium debugger protocol. It does so by the means of a node.js based application, which implements the following mechanisms:</p>
@@ -72,10 +134,8 @@ Pointing a browser on <code>localhost:8080</code> we&#8217;ll get a page with a 
 
 <p>Anyway, sometimes a screencast is better then thousand words, so you can check out this short demo:</p>
 
-<iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+<center><iframe src="http://player.vimeo.com/video/70244213" width="500" height="305" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p></center>
 
-
-<p> <p><a href="http://vimeo.com/70244213">Ti Inspector Demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="https://vimeo.com">Vimeo</a>.</p></p>
 
 <h2>Features</h2>
 
@@ -117,7 +177,7 @@ Pointing a browser on <code>localhost:8080</code> we&#8217;ll get a page with a 
     <link href="http://titaniumninja.com/ticonf-2013-and-new-titanium-modules/"/>
     <updated>2013-03-07T16:55:00+01:00</updated>
     <id>http://titaniumninja.com/ticonf-2013-and-new-titanium-modules</id>
-    <content type="html"><![CDATA[<center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="500" height="333" alt="@oliviermorandi Discusses native module creation"></a><br>Courtesy <a href="http://www.tipsyandtumbler.co.uk/">Tipsy &amp; Tumbler Ltd</a>
+    <content type="html"><![CDATA[<center><a href="http://www.flickr.com/photos/93283347@N02/8517412475/" title="@oliviermorandi Discusses native module creation by tiConf EU 2013 / Tipsy &amp; Tumbler Ltd, on Flickr"><img src="http://farm9.staticflickr.com/8241/8517412475_21881b0207.jpg" width="640" height="480" alt="@oliviermorandi Discusses native module creation"></a><br>Courtesy <a href="http://www.tipsyandtumbler.co.uk/">Tipsy &amp; Tumbler Ltd</a>
 </center>
 
 
@@ -126,7 +186,7 @@ Pointing a browser on <code>localhost:8080</code> we&#8217;ll get a page with a 
 
 <p>Almost two weeks ago I had the pleasure to attend <a href="http://ticonf.eu">tiConf 2013</a> in Valencia, where, besides getting in touch with lots of awesome developers from all over the world, I held a workshop on native module development for Titanium on both iOS and Android platforms. Here&#8217;s the presentation:</p>
 
-<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen webkitallowfullscreen mozallowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/16780042" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/omorandi/ticonf" title="Extending Titanium with native iOS and Android modules " target="_blank">Extending Titanium with native iOS and Android modules </a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
 
 
 
@@ -175,10 +235,8 @@ Pointing a browser on <code>localhost:8080</code> we&#8217;ll get a page with a 
 
 <p>So I started creating a very simple web-based GUI and a node.js server component providing a proxy between the client app and the profiler, and today I&#8217;m able to introduce some results, with the following demo screencast:</p>
 
-<iframe src="http://player.vimeo.com/video/46148981" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+<center><iframe src="http://player.vimeo.com/video/46148981" width="500" height="313" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/46148981">TiProfiler demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p></center>
 
-
-<p> <p><a href="http://vimeo.com/46148981">TiProfiler demo</a> from <a href="http://vimeo.com/user8368459">Olivier Morandi</a> on <a href="http://vimeo.com">Vimeo</a>.</p></p>
 
 <p>This has been possible thanks to the following technologies/libraries:</p>
 
@@ -293,7 +351,7 @@ The web-app, on the other side, issues start &amp; stop commands to the node ser
 <p>Now you can start executing your tests (also called <em>specs</em>), whose JS files should reside all in the same directory tree. For example, let&#8217;s consider the following directory tree, which could be part of a Ti Mobile project:</p>
 
 <pre><code>project/
-|     
+|
 +---- Resources/
 |     |
 |     +---- app.js
@@ -328,29 +386,37 @@ Finished in 0.013 seconds
 
 <p>Now, we can write our code and our tests. For example, suppose in our app we have a module with some silly utility functions:</p>
 
-<pre><code>project/Resources/app-modules/util.js:
---------------------------
+<figure class='code'><figcaption><span>project/Resources/app-modules/util.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">computeSum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
 
-exports.computeSum = function(a, b) {
-    return a + b;
-};
-</code></pre>
 
 <p>we can write our Jasmine spec like this:</p>
 
-<pre><code>project/spec/util_spec.js:
---------------------------
+<figure class='code'><figcaption><span>project/spec/util_spec.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../Resources/app-modules/util&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;util tests&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should compute the sum between 1 &amp; 2&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">util</span><span class="p">.</span><span class="nx">computeSum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">expect</span><span class="p">(</span><span class="nx">sum</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
-var util = require('../Resources/app-modules/util');
-describe('util tests', function() {
-
-    it('should compute the sum between 1 &amp; 2', function(){
-        var sum = util.computeSum(1, 2);
-        expect(sum).toEqual(3);
-    });
-
-});
-</code></pre>
 
 <p>let&#8217;s run the spec:</p>
 
@@ -373,20 +439,21 @@ Finished in 0.007 seconds
 
 <p>For example, taking into account the directory tree laid out before, let&#8217;s suppose the <code>backend.js</code> module is dependent from the <code>util.js</code> module, we&#8217;ll need to write the <code>require()</code> in this way:</p>
 
-<pre><code>project/Resources/app-modules/backend.js:
---------------------------
+<figure class='code'><figcaption><span>project/Resources/app-modules/backend.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;app-modules/util&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//...</span>
+</span></code></pre></td></tr></table></div></figure>
 
-require('app-modules/util');
-
-//...
-</code></pre>
 
 <p>In our jasmine specs we&#8217;ll use relative paths as usual.</p>
 
 <p>Now the trick is to set the NODE_PATH environment variable to point to the <code>Resources</code> directory of the Ti Project, just like:</p>
 
 <pre><code>export NODE_PATH="${PROJECT_DIR}/Resources"
-jasmine-node spec   
+jasmine-node spec
 </code></pre>
 
 <p>This will instruct the Node.js environment to search for modules in the <code>Resources</code> directory, allowing them to be found by the test runner.</p>
@@ -460,7 +527,7 @@ jasmine-node spec
 
 <p>Finally, here you find the slides of my presentation:</p>
 
-<div style="width:425px" id="__ss_13102557"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance">Titanium Mobile: flexibility vs. performance</a></strong><object id="__sse13102557" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" /><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="wmode" value="transparent"/><embed name="__sse13102557" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" width="425" height="355"></embed></object><div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/omorandi">omorandi</a>.</div></div>
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/13102557" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance" target="_blank">Titanium Mobile: flexibility vs. performance</a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
 
 ]]></content>
   </entry>
@@ -519,7 +586,9 @@ When developing for iOS, we can use the Instruments profiling tool provided with
 
 <p>So, during my journey, I managed to <a href="http://titaniumninja.com/2012-03-02-building-titanium-mobile-jscore-from-source">build the JavaScriptCore library from scratch</a> and I started tweaking the code in order to be able to start and stop the profiling from the native code of a Titanium application. I had a quite encouraging success a couple of weeks ago and tweeted about it:</p>
 
-<blockquote class="twitter-tweet"><p>YAY! got JSCore profiler running in Ti Mobile on iOS! Still work to be done for extracting useful info, though - <a href="https://t.co/yXtItEwS" title="https://skitch.com/omorandi/8ggw7/xcode">skitch.com/omorandi/8ggw7…</a></p>&mdash; Olivier Morandi (@olivier_morandi) <a href="https://twitter.com/olivier_morandi/status/175231374662443010" data-datetime="2012-03-01T14:49:50+00:00">March 1, 2012</a></blockquote>
+<center><blockquote class="twitter-tweet"><p>YAY! got JSCore profiler running in Ti Mobile on iOS! Still work to be done for extracting useful info, though - <a href="https://t.co/yXtItEwS" title="https://skitch.com/omorandi/8ggw7/xcode">skitch.com/omorandi/8ggw7…</a></p>&mdash; Olivier Morandi (@olivier_morandi) <a href="https://twitter.com/olivier_morandi/status/175231374662443010" data-datetime="2012-03-01T14:49:50+00:00">March 1, 2012</a></blockquote></center>
+
+
 
 
 <script src="http://titaniumninja.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
@@ -527,12 +596,76 @@ When developing for iOS, we can use the Instruments profiling tool provided with
 
 <p>Actually I was happy about the integration, but no real profiling data was returned. After studying more deeply the code and a lot of debugging, today I&#8217;ve been able to produce a  more meaningful profile of a test application, which is composed of a barebone <code>app.js</code> file:</p>
 
-<script src="https://gist.github.com/2029449.js?file=app.js"></script>
+<figure class='code'><figcaption><span>app.js</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">Ti</span><span class="p">.</span><span class="nx">include</span><span class="p">(</span><span class="s1">&#39;included.js&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">launch_test1</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">test1</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">launch_test2</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">test2</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">launch_test1</span><span class="p">();</span>
+</span><span class='line'><span class="nx">launch_test2</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>and a module containing a couple of functions performing some useless math tasks. The module is suitable to be either included via <code>Ti.include()</code>, or required through CommonJS <code>require()</code>:</p>
 
-<script src="https://gist.github.com/2029449.js?file=included.js"></script>
+<figure class='code'><figcaption><span>included.js</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">exports</span> <span class="o">=</span> <span class="nx">exports</span> <span class="o">||</span> <span class="p">{};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">function</span> <span class="nx">test1</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">1000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">sum</span> <span class="o">=</span> <span class="nx">sum</span> <span class="o">+</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">cos</span><span class="p">(</span><span class="nx">i</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">Ti</span><span class="p">.</span><span class="nx">API</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;result 1: &#39;</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">test2</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>    <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="mi">1000000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nx">sum</span> <span class="o">+=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">sin</span><span class="p">(</span><span class="nx">i</span><span class="o">/</span><span class="mi">1000</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="nx">Ti</span><span class="p">.</span><span class="nx">API</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;result 2: &#39;</span> <span class="o">+</span> <span class="nx">sum</span><span class="p">);</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">test1</span> <span class="o">=</span> <span class="nx">test1</span><span class="p">;</span>
+</span><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">test2</span> <span class="o">=</span> <span class="nx">test2</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 <p>Please note that the two test functions in <code>included.js</code> are defined in different ways. The first is defined as a <strong>named function</strong> <code>test1()</code>, while the other is defined as an <strong>anonymous function</strong>, which is assigned to the variable <code>test2</code>.</p>
@@ -731,7 +864,7 @@ sudo ipfw add 1 pipe 2 out proto ip
 
 
 
-<p>On the other hand, when deploying on the device, the original source files are processed and packed into a single file, just before building the app. 
+<p>On the other hand, when deploying on the device, the original source files are processed and packed into a single file, just before building the app.
 
 This step generates the <code>build/iphone/Classes/ApplicationRouting.m</code> file, which is one of the very few that are dynamically generated by the build process. Indeed, most of the objective-c files that compose the native app are simply copied from the appropriate Ti SDK directory (e.g. <code>/Library/Application\ Support/Titanium/mobilesdk/osx/1.8.0</code>) into the <code>build/iphone</code> directory of the project by the titanium build scripts when you launch the app from Ti Studio, or from the command line.</p>
 
@@ -740,16 +873,82 @@ This step generates the <code>build/iphone/Classes/ApplicationRouting.m</code> f
 <p>Once generated, <code>ApplicationRouting.m</code> contains the definition of a dictionary object that associates the name of each JS file present in the Resources directory of your project with a binary representation of its original content, along with a single class method named <code>resolveAppAsset:</code> whose only purpose is to return the appropriate file content for a given path:</p>
 
 
+<figure class='code'><figcaption><span>ApplicationRouting.m</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">NSData</span><span class="o">*</span><span class="p">)</span> <span class="nf">resolveAppAsset:</span><span class="p">(</span><span class="n">NSString</span><span class="o">*</span><span class="p">)</span><span class="nv">path</span><span class="p">;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="k">static</span> <span class="n">NSMutableDictionary</span> <span class="o">*</span><span class="n">map</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">map</span><span class="o">==</span><span class="nb">nil</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="n">map</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSMutableDictionary</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">init</span><span class="p">];</span>
+</span><span class='line'>        <span class="c1">//here the entry for app.js is created</span>
+</span><span class='line'>        <span class="c1">//(I filled the hex string with garbage - it&#39;s only an example)</span>
+</span><span class='line'>        <span class="p">[</span><span class="n">map</span> <span class="nl">setObject:</span><span class="n">dataWithHexString</span> <span class="s">@&quot;DEADBEEF…&quot;</span> <span class="nl">forKey:</span><span class="s">@&quot;app_js&quot;</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="c1">//here the content of the file at &quot;path&quot; is returned to the caller</span>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">map</span> <span class="nl">objectForKey:</span><span class="n">path</span><span class="p">];</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<script src="https://gist.github.com/1237812.js?file=gistfile1.m"></script><p>In other words, this portion of code represents the point where the original content of each JS file is dispatched to the Titanium runtime environment, which will then feed it to the JSCore interpreter.</p>
+<p>In other words, this portion of code represents the point where the original content of each JS file is dispatched to the Titanium runtime environment, which will then feed it to the JSCore interpreter.</p>
 
 
 
 <p>As you surely understand at this point, the FastDev hack is made possible by simply using a modified version of the <code>resolveAppAsset</code> method, which, instead of returning static data, opens a connection to an HTTP server running on the development machine for retrieving the original JS files from the Resources directory:</p>
 
 
-
-<script src="https://gist.github.com/1237725.js?file=gistfile1.m"></script><p>Actually it&#8217;s that simple, however there are some caveats:</p>
+<figure class='code'><figcaption><span>ApplicationRouting.m (modified version)</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='objective-c'><span class='line'><span class="k">+</span> <span class="p">(</span><span class="n">NSData</span><span class="o">*</span><span class="p">)</span> <span class="nf">resolveAppAsset:</span><span class="p">(</span><span class="n">NSString</span><span class="o">*</span><span class="p">)</span><span class="nv">path</span><span class="p">;</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">ServerAddr</span> <span class="o">=</span> <span class="n">SERVER_ADDRESS</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">ServerPort</span> <span class="o">=</span> <span class="n">SERVER_PORT</span><span class="p">;</span>
+</span><span class='line'>    <span class="n">NSString</span> <span class="o">*</span><span class="n">path_url</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSString</span> <span class="nl">stringWithFormat:</span><span class="s">@&quot;http://%@:%@/%@&quot;</span><span class="p">,</span><span class="n">ServerAddr</span><span class="p">,</span> <span class="n">ServerPort</span><span class="p">,</span> <span class="n">path</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSURL</span> <span class="o">*</span><span class="n">url</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSURL</span> <span class="nl">URLWithString:</span><span class="n">path_url</span><span class="p">];</span>
+</span><span class='line'>    <span class="n">ASIHTTPRequest</span> <span class="o">*</span><span class="n">request</span> <span class="o">=</span> <span class="p">[</span><span class="n">ASIHTTPRequest</span> <span class="nl">requestWithURL:</span><span class="n">url</span><span class="p">];</span>
+</span><span class='line'>    <span class="p">[</span><span class="n">request</span> <span class="n">startSynchronous</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">([</span><span class="n">request</span> <span class="n">responseStatusCode</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">NSError</span> <span class="o">*</span><span class="n">error</span> <span class="o">=</span> <span class="p">[</span><span class="n">request</span> <span class="n">error</span><span class="p">];</span>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="n">error</span><span class="p">)</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nb">nil</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">return</span> <span class="p">[</span><span class="n">request</span> <span class="n">responseData</span><span class="p">];</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
 
@@ -761,7 +960,29 @@ This step generates the <code>build/iphone/Classes/ApplicationRouting.m</code> f
 
 <li><p>For testing the application on the iOS emulator, the request to the server can be made on <code>localhost</code>, however, for on-device testing, we need to know in advance the IP address at which we the server can be reached, because the modified <code>ApplicationRouting.m</code> will be built into the native application running on the target device. This is achieved through a simple trick in the startserver.py script:</p></li>
 
-</ol><script src="https://gist.github.com/1237809.js?file=gistfile1.py"></script><p>This code allows discovering the local IP address that routes to the Internet (specifically to gmail.com), so I make the assumption that the iPhone/iPad used for testing and the development machine reside both on the same local network and that the IP address of the Mac machine on that network is also the one that routes it to the Internet.</p>
+</ol>
+
+<figure class='code'><figcaption><span>startserver.py</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="n">ip_addr</span> <span class="o">=</span> <span class="s">&quot;localhost&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_DGRAM</span><span class="p">)</span>
+</span><span class='line'><span class="k">try</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">connect</span><span class="p">((</span><span class="s">&quot;gmail.com&quot;</span><span class="p">,</span><span class="mi">80</span><span class="p">))</span>
+</span><span class='line'>    <span class="n">ip_addr</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'><span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span>
+</span><span class='line'>    <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span class='line'>    <span class="n">s</span> <span class="o">=</span> <span class="bp">None</span>
+</span></code></pre></td></tr></table></div></figure>
+
+<p>This code allows discovering the local IP address that routes to the Internet (specifically to gmail.com), so I make the assumption that the iPhone/iPad used for testing and the development machine reside both on the same local network and that the IP address of the Mac machine on that network is also the one that routes it to the Internet.</p>
 
 
 
@@ -878,7 +1099,7 @@ $PRJ_DIR (The root directory of your Ti Mobile App project)
 
 
 
-<iframe src="http://player.vimeo.com/video/29218138?title=0&amp;byline=0&amp;portrait=0" width="400" height="300" frameborder="0" webkitallowfullscreen allowfullscreen></iframe>
+<center><iframe src="http://player.vimeo.com/video/29218138?title=0&amp;byline=0&amp;portrait=0" width="400" height="300" frameborder="0" webkitallowfullscreen allowfullscreen></iframe></center>
 
 
 

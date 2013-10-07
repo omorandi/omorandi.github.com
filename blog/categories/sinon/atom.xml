@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: sinon, | Titanium Ninja]]></title>
+  <title><![CDATA[Category: sinon | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/sinon/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:58:52+02:00</updated>
+  <updated>2013-10-07T17:50:17+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -60,7 +60,7 @@
 <p>Now you can start executing your tests (also called <em>specs</em>), whose JS files should reside all in the same directory tree. For example, let's consider the following directory tree, which could be part of a Ti Mobile project:</p>
 
 <pre><code>project/
-|     
+|
 +---- Resources/
 |     |
 |     +---- app.js
@@ -95,29 +95,29 @@ Finished in 0.013 seconds
 
 <p>Now, we can write our code and our tests. For example, suppose in our app we have a module with some silly utility functions:</p>
 
-<pre><code>project/Resources/app-modules/util.js:
---------------------------
+<p>```javascript project/Resources/app-modules/util.js:
+exports.computeSum = function(a, b) {</p>
 
-exports.computeSum = function(a, b) {
-    return a + b;
-};
+<pre><code>return a + b;
 </code></pre>
 
-<p>we can write our Jasmine spec like this:</p>
+<p>};
+```
+we can write our Jasmine spec like this:</p>
 
-<pre><code>project/spec/util_spec.js:
---------------------------
+<p>```javascript project/spec/util_spec.js:</p>
 
-var util = require('../Resources/app-modules/util');
-describe('util tests', function() {
+<p>var util = require('../Resources/app-modules/util');
+describe('util tests', function() {</p>
 
-    it('should compute the sum between 1 &amp; 2', function(){
-        var sum = util.computeSum(1, 2);
-        expect(sum).toEqual(3);
-    });
-
+<pre><code>it('should compute the sum between 1 &amp; 2', function(){
+    var sum = util.computeSum(1, 2);
+    expect(sum).toEqual(3);
 });
 </code></pre>
+
+<p>});
+```</p>
 
 <p>let's run the spec:</p>
 
@@ -140,20 +140,21 @@ Finished in 0.007 seconds
 
 <p>For example, taking into account the directory tree laid out before, let's suppose the <code>backend.js</code> module is dependent from the <code>util.js</code> module, we'll need to write the <code>require()</code> in this way:</p>
 
-<pre><code>project/Resources/app-modules/backend.js:
---------------------------
+<p>```javascript project/Resources/app-modules/backend.js:</p>
 
-require('app-modules/util');
+<pre><code>require('app-modules/util');
 
 //...
 </code></pre>
+
+<p>```</p>
 
 <p>In our jasmine specs we'll use relative paths as usual.</p>
 
 <p>Now the trick is to set the NODE_PATH environment variable to point to the <code>Resources</code> directory of the Ti Project, just like:</p>
 
 <pre><code>export NODE_PATH="${PROJECT_DIR}/Resources"
-jasmine-node spec   
+jasmine-node spec
 </code></pre>
 
 <p>This will instruct the Node.js environment to search for modules in the <code>Resources</code> directory, allowing them to be found by the test runner.</p>

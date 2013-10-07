@@ -1,0 +1,208 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+	<script data-cfasync="false" type="text/javascript" src="//use.typekit.net/axj3cfp.js"></script>
+	<script data-cfasync="false" type="text/javascript">try{Typekit.load();}catch(e){}</script>
+	<meta charset="utf-8">
+	<title>On-device debugging with Xcode and Ti Inspector  | Titanium Ninja</title>
+
+<meta name="author" content="TiNinja">
+
+<meta name="description" content="If you enjoy using Ti Inspector for debugging and inspecting the state of your Titanium apps in the iOS simulator, you&#8217;ve probably wondered if &hellip;"> <meta name="keywords" content="">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+</head>
+
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Titanium Ninja</a></h1>
+<h4>App and module development with Titanium Mobile</h4>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">Whoami</a></li>
+  <li><a href="/talks">Talks</a></li>
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja">RSS</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">Whoami</a></li>
+  <li><a href="/talks">Talks</a></li>
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja">RSS</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:titaniumninja.com">
+			</form>
+		</div>
+	</div>
+</nav>
+
+
+</header>
+
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">On-device Debugging With Xcode and Ti Inspector</h2>
+	<div class="entry-content"><p>If you enjoy using <a href="/debugging-titanium-apps-with-chrome-devtools/">Ti Inspector</a> for debugging and inspecting the state of your Titanium apps in the iOS simulator, you&#8217;ve probably wondered if it would be possible doing the same for apps executed on device. Actually, the way the Ti SDK builds up the connection between the running app and the debugging server implemented in Titanium Studio prevents this to happen in a seamless way when using Ti Inspector. Moreover the client component of the debugger (i.e. the one that is executed within the app) is implemented in a closed source library (<code>libti_ios_debugger.a</code>), making it somewhat hard to create a server component that can seamlessly replace the Titanium Studio debugging server. I must say that I didn&#8217;t bother to investigate the issue in too much detail, and I&#8217;m working on a different kind of solution involving the use of a custom native module.</p>
+
+<p>Anyway, while the module-based solution is not yet ready, I&#8217;d like to share a rather simple way to use Ti Inspector with an app running on an iOS device, even if the required steps might appear a bit convoluted at a first sight. This involves launching the application through Xcode, and using its powerful <a href="https://developer.apple.com/library/ios/recipes/xcode_help-breakpoint_navigator/articles/setting_breakpoint_actions_and_options.html#//apple_ref/doc/uid/TP40010433-CH3-SW1">conditional breakpoints</a>. In particular, Xcode allows setting breakpoints in your application source code, which are triggered only if the specified condition is met. Moreover we can attach specific actions to be executed right after the breakpoint has been hit, as well as enabling the program to resume right away, without interrupting its normal flow.</p>
+
+<p>The most useful among the available actions that can be attached to a breakpoint are &#8220;Log Message&#8221; and &#8220;Debugger Command&#8221;. These can be of great help for printing out the state of some variables in our code during its execution, allowing us to add debug log statements at runtime, without even touching the code.</p>
+
+<p>So, without further ado, let&#8217;s see how to build our app through Xcode, allowing it to work with Ti Inspector.</p>
+
+<p>First, we need to build the app through Ti Studio or the CLI for running it through the iOS simulator:</p>
+
+<pre><code>$ titanium build -p iphone
+</code></pre>
+
+<p>Then we need to get the IP address of our development machine on our WiFi network (e.g. en1 interface on a MacBook Pro):</p>
+
+<pre><code>$ ifconfig en1
+</code></pre>
+
+<p>We&#8217;ll get something like:</p>
+
+<pre><code>en1: flags=8863&lt;UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST&gt; mtu 1500
+    ether xx:xx:xx:xx:xx:xx
+    inet 192.168.1.3 netmask 0xffffff00 broadcast 192.168.1.255
+    nd6 options=1&lt;PERFORMNUD&gt;
+    media: autoselect
+    status: active
+</code></pre>
+
+<p>The current IP address assigned to the WiFi interface in this case is <code>192.168.1.3</code></p>
+
+<p>We can now open the Xcode project:</p>
+
+<pre><code>$ open build/iphone/name_of_your_app.xcodeproj
+</code></pre>
+
+<p>We&#8217;ll have to add a couple of breakpoints in <code>TiApp.m</code>, in the <code>-(void)boot</code> method (starting at line 187 in Ti SDK 3.1.3.GA), where the connection with the debugger server is initiated. In particular, we need to fake the presence of a <code>debugger.plist</code> file, then we can set the two <code>host</code> and <code>port</code> parameters where the Ti Inspector debug server is listening, i.e. the IP address we retrieved before (e.g. <code>192.168.1.3</code>) and for example the default <code>8999</code> port.</p>
+
+<p>For setting the required values we use the <code>expr</code> <a href="http://lldb.llvm.org/tutorial.html">lldb command</a> for evaluating expressions in the debugger, so we edit the two breakpoints adding a &#8220;Debugger Command&#8221; action:</p>
+
+<h3>Add breakpoint and edit</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_edit_break.png"></p>
+
+<h3>Manipulate the filePath variable</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_file_break.png"></p>
+
+<h3>Set the debugger host and port</h3>
+
+<p><img class="center" src="/images/posts/2013-10-07/xcode_host_port_break.png"></p>
+
+<p>Once this setup phase is completed we can launch the application, by selecting the appropriate device target.</p>
+
+<p>As a side note, this mechanism also works for simulator targets, without the need to build the app through the CLI with the <code>--debug-host</code> option.</p>
+</div>
+
+
+<div class="meta">
+	<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-10-07T11:25:00+02:00" pubdate data-updated="true">Oct 7<span>th</span>, 2013</time></div>
+	
+
+<div class="tags">
+
+	<a class='category' href='/blog/categories/debugging/'>debugging</a>, <a class='category' href='/blog/categories/ios/'>ios</a>, <a class='category' href='/blog/categories/ti-inspector/'>ti-inspector</a>
+
+</div>
+
+
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+<!---	<a class="addthis_counter addthis_pill_style"></a> --->
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
+
+    TiNinja
+
+<br>
+Powered by Octopress. Theme inspired by <a href="https://github.com/macjasp/cleanpress">CleanPress</a>
+</footer>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tininja';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector/';
+        var disqus_url = 'http://titaniumninja.com/on-device-debugging-with-xcode-and-ti-inspector/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-8810685-2']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+
+</body>
+</html>

@@ -1,110 +1,66 @@
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<!DOCTYPE HTML>
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Testing Titanium Mobile applications with Jasmine and Sinon (part I) - Titanium Ninja</title>
-  <meta name="author" content="TiNinja">
+	<script data-cfasync="false" type="text/javascript" src="//use.typekit.net/axj3cfp.js"></script>
+	<script data-cfasync="false" type="text/javascript">try{Typekit.load();}catch(e){}</script>
+	<meta charset="utf-8">
+	<title>Testing Titanium Mobile applications with Jasmine and Sinon (part I)  | Titanium Ninja</title>
 
-  
-  <meta name="description" content="As the code base of an application grows, manual testing becomes very quickly a cumbersome and highly error prone activity. Moreover, when fixing &hellip;">
-  
+<meta name="author" content="TiNinja">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="As the code base of an application grows, manual testing becomes very quickly a cumbersome and highly error prone activity. Moreover, when fixing &hellip;"> <meta name="keywords" content="">
 
-  
-  <link rel="canonical" href="http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Alike+Angular' rel='stylesheet' type='text/css'>
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-8810685-2']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
+	<link href="http://feeds.feedburner.com/TitaniumNinja" rel="alternate" title="Titanium Ninja" type="application/atom+xml">
+	<link rel="canonical" href="">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">Titanium Ninja</a></h1>
-  
-    <h2>App and module development with Titanium Mobile</h2>
-  
-</hgroup>
+
+<body>
+	<header id="header" class="inner"><h1><a href="/">Titanium Ninja</a></h1>
+<h4>App and module development with Titanium Mobile</h4>
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">Whoami</a></li>
+  <li><a href="/talks">Talks</a></li>
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja">RSS</a></li>
+</ul>
+</nav>
+<nav id="mobile-nav">
+	<div class="alignleft menu">
+		<a class="button">Menu</a>
+		<div class="container"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/whoami/">Whoami</a></li>
+  <li><a href="/talks">Talks</a></li>
+  <li><a href="http://feeds.feedburner.com/TitaniumNinja">RSS</a></li>
+</ul>
+</div>
+	</div>
+	<div class="alignright search">
+		<a class="button"></a>
+		<div class="container">
+			<form action="http://google.com/search" method="get">
+				<input type="text" name="q" results="0">
+				<input type="hidden" name="q" value="site:titaniumninja.com">
+			</form>
+		</div>
+	</div>
+</nav>
+
 
 </header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="http://feeds.feedburner.com/TitaniumNinja" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:titaniumninja.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/whoami/">whoami</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
 
-</nav>
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Testing Titanium Mobile Applications With Jasmine and Sinon (Part I)</h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-11T18:16:00+02:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-<div class="entry-content"><p>As the code base of an application grows, manual testing becomes very quickly a cumbersome and highly error prone activity. Moreover, when fixing bugs or refactoring portions of the app, there&#8217;s no way for telling if a fix is breaking something that was previously working. In order to mitigate such drawbacks, automatic unit testing tools come at help, allowing to describe how each single component of an application must behave, and testing in a systematic way if the imposed requirements and expectations are met.</p>
+	<div id="content" class="inner"><article class="post">
+	<h2 class="title">Testing Titanium Mobile Applications With Jasmine and Sinon (Part I)</h2>
+	<div class="entry-content"><p>As the code base of an application grows, manual testing becomes very quickly a cumbersome and highly error prone activity. Moreover, when fixing bugs or refactoring portions of the app, there&#8217;s no way for telling if a fix is breaking something that was previously working. In order to mitigate such drawbacks, automatic unit testing tools come at help, allowing to describe how each single component of an application must behave, and testing in a systematic way if the imposed requirements and expectations are met.</p>
 
 <p>During the last year, which I mainly spent developing and maintaining a quite large and complex Ti Mobile application, I tried to investigate which were the available options for gradually introducing automatic testing in my development workflow. There is plenty of tools and frameworks for Javascript testing, and although most of them are obviously targeted to the web development world, some of them have been more or less successfully made available for testing Titanium Mobile applications.</p>
 
@@ -146,7 +102,7 @@
 <p>Now you can start executing your tests (also called <em>specs</em>), whose JS files should reside all in the same directory tree. For example, let&#8217;s consider the following directory tree, which could be part of a Ti Mobile project:</p>
 
 <pre><code>project/
-|     
+|
 +---- Resources/
 |     |
 |     +---- app.js
@@ -181,29 +137,37 @@ Finished in 0.013 seconds
 
 <p>Now, we can write our code and our tests. For example, suppose in our app we have a module with some silly utility functions:</p>
 
-<pre><code>project/Resources/app-modules/util.js:
---------------------------
+<figure class='code'><figcaption><span>project/Resources/app-modules/util.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">exports</span><span class="p">.</span><span class="nx">computeSum</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
 
-exports.computeSum = function(a, b) {
-    return a + b;
-};
-</code></pre>
 
 <p>we can write our Jasmine spec like this:</p>
 
-<pre><code>project/spec/util_spec.js:
---------------------------
+<figure class='code'><figcaption><span>project/spec/util_spec.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;../Resources/app-modules/util&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;util tests&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nx">it</span><span class="p">(</span><span class="s1">&#39;should compute the sum between 1 &amp; 2&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(){</span>
+</span><span class='line'>      <span class="kd">var</span> <span class="nx">sum</span> <span class="o">=</span> <span class="nx">util</span><span class="p">.</span><span class="nx">computeSum</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span><span class='line'>      <span class="nx">expect</span><span class="p">(</span><span class="nx">sum</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">});</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">});</span>
+</span></code></pre></td></tr></table></div></figure>
 
-var util = require('../Resources/app-modules/util');
-describe('util tests', function() {
-
-    it('should compute the sum between 1 &amp; 2', function(){
-        var sum = util.computeSum(1, 2);
-        expect(sum).toEqual(3);
-    });
-
-});
-</code></pre>
 
 <p>let&#8217;s run the spec:</p>
 
@@ -226,20 +190,21 @@ Finished in 0.007 seconds
 
 <p>For example, taking into account the directory tree laid out before, let&#8217;s suppose the <code>backend.js</code> module is dependent from the <code>util.js</code> module, we&#8217;ll need to write the <code>require()</code> in this way:</p>
 
-<pre><code>project/Resources/app-modules/backend.js:
---------------------------
+<figure class='code'><figcaption><span>project/Resources/app-modules/backend.js:</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;app-modules/util&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//...</span>
+</span></code></pre></td></tr></table></div></figure>
 
-require('app-modules/util');
-
-//...
-</code></pre>
 
 <p>In our jasmine specs we&#8217;ll use relative paths as usual.</p>
 
 <p>Now the trick is to set the NODE_PATH environment variable to point to the <code>Resources</code> directory of the Ti Project, just like:</p>
 
 <pre><code>export NODE_PATH="${PROJECT_DIR}/Resources"
-jasmine-node spec   
+jasmine-node spec
 </code></pre>
 
 <p>This will instruct the Node.js environment to search for modules in the <code>Resources</code> directory, allowing them to be found by the test runner.</p>
@@ -252,14 +217,8 @@ jasmine-node spec
 </div>
 
 
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">TiNinja</span></span>
-
-      
+<div class="meta">
+	<div class="date">
 
 
 
@@ -271,156 +230,47 @@ jasmine-node spec
   
 
 
-<time datetime="2012-06-11T18:16:00+02:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time>
-      
+<time datetime="2012-06-11T18:16:00+02:00" pubdate data-updated="true">Jun 11<span>th</span>, 2012</time></div>
+	
 
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/jasmine/'>jasmine,</a>, <a class='category' href='/blog/categories/sinon/'>sinon,</a>, <a class='category' href='/blog/categories/testing/'>testing,</a>, <a class='category' href='/blog/categories/tools/'>tools</a>, <a class='category' href='/blog/categories/unit/'>unit</a>
-  
-</span>
+<div class="tags">
 
+	<a class='category' href='/blog/categories/jasmine/'>jasmine</a>, <a class='category' href='/blog/categories/sinon/'>sinon</a>, <a class='category' href='/blog/categories/tools/'>tools</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
 
-    </p>
-    
-      <div class="sharing">
-  
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/" data-via="olivier_morandi" data-counturl="http://titaniumninja.com/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/" >Tweet</a>
-  
-  
-  
 </div>
 
-    
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/titanium-mobile-flexibility-vs-performance/" title="Previous Post: Titanium Mobile: Flexibility vs. Performance">&laquo; Titanium Mobile: Flexibility vs. Performance</a>
-      
-      
-        <a class="basic-alignment right" href="/introducing-tiprofiler-for-ios/" title="Next Post: Introducing TiProfiler for iOS">Introducing TiProfiler for iOS &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
 
-  <section>
-    <h1>Comments</h1>
+	
+</div></article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	
+	<a class="addthis_button_tweet"></a>
+	
+	
+<!---	<a class="addthis_counter addthis_pill_style"></a> --->
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h2 class="title">Comments</h2>
     <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </div>
-  </section>
-
+</section>
 </div>
+	<footer id="footer" class="inner">Copyright &copy; 2013
 
-<aside class="sidebar">
-  
-    <section>
-	<center><a href="http://2013.ticonf.eu/?utm_source=FreeBlogAd&utm_medium=Web&utm_campaign=TiConf"><img src="/images/ticonf.eu.2013.jpeg" alt="tiConf 2013" /></a></center>
-</section>
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/debugging-titanium-apps-with-chrome-devtools/">Debugging Titanium Apps with Chrome DevTools</a>
-      </li>
-    
-      <li class="post">
-        <a href="/ticonf-2013-and-new-titanium-modules/">tiConf 2013 and new Titanium modules</a>
-      </li>
-    
-      <li class="post">
-        <a href="/introducing-tiprofiler-for-ios/">Introducing TiProfiler for iOS</a>
-      </li>
-    
-      <li class="post">
-        <a href="/testing-titanium-mobile-applications-with-jasmine-and-sinon-part-i/">Testing Titanium Mobile applications with Jasmine and Sinon (part I)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/titanium-mobile-flexibility-vs-performance/">Titanium Mobile: Flexibility vs. Performance</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <a href="/tcmd"><img src="/images/tcmd_color.png" alt="tcmd-logo" /></a>
-</section>
-<section>
-  <h1>Coderwall</h1>
-  <p>
-  <script type="text/javascript">
-    function display_coderwall(args) {
-        var badges = args["data"]["badges"];
-        for ( var i = 0; i < badges.length; i++ ) {
-            document.write('<img src="'+ badges[i]["badge"] + '" width="80" height="80" />');
-        }
-    }
-  </script>
-  <script src="http://coderwall.com/omorandi.json?callback=display_coderwall"></script>
-  </p>
-  <p style="text-align: right;"><a href="http://coderwall.com/omorandi">Powered by coderwall.com</a></p>
-</section>
+    TiNinja
 
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/omorandi">@omorandi</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'omorandi',
-            count: 3,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-<section>
-  <h1>Latest Tweets</h1>
-  <ul id="tweets">
-    <li class="loading">Status updating...</li>
-  </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("olivier_morandi", 4, false);
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
-  
-    <a href="http://twitter.com/olivier_morandi" class="twitter-follow-button" data-show-count="false">Follow @olivier_morandi</a>
-  
-</section>
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - TiNinja -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+<br>
+Powered by Octopress. Theme inspired by <a href="https://github.com/macjasp/cleanpress">CleanPress</a>
 </footer>
-  
+	
 
 <script type="text/javascript">
       var disqus_shortname = 'tininja';
@@ -440,21 +290,17 @@ jasmine-node spec
 
 
 
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-8810685-2']);
+		_gaq.push(['_trackPageview']);
 
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
 
 
 

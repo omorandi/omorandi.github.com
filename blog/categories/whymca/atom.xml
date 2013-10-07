@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: whymca, | Titanium Ninja]]></title>
+  <title><![CDATA[Category: whymca | Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/blog/categories/whymca/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-07-16T15:58:52+02:00</updated>
+  <updated>2013-10-07T17:50:17+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -74,7 +74,7 @@
 
 <p>Finally, here you find the slides of my presentation:</p>
 
-<div style="width:425px" id="__ss_13102557"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance">Titanium Mobile: flexibility vs. performance</a></strong><object id="__sse13102557" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" /><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="wmode" value="transparent"/><embed name="__sse13102557" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=oliviermorandi-whymca12-120528055815-phpapp01&stripped_title=titanium-mobile-flexibility-vs-performance-13102557&userName=omorandi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" wmode="transparent" width="425" height="355"></embed></object><div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/omorandi">omorandi</a>.</div></div>
+<center><iframe src="http://www.slideshare.net/slideshow/embed_code/13102557" width="597" height="486" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="https://www.slideshare.net/omorandi/titanium-mobile-flexibility-vs-performance-13102557" title="Titanium Mobile: flexibility vs. performance" target="_blank">Titanium Mobile: flexibility vs. performance</a> </strong> from <strong><a href="http://www.slideshare.net/omorandi" target="_blank">omorandi</a></strong> </div></center>
 
 ]]></content>
   </entry>
