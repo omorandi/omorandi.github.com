@@ -4,7 +4,7 @@
   <title><![CDATA[Titanium Ninja]]></title>
   <link href="http://titaniumninja.com/atom.xml" rel="self"/>
   <link href="http://titaniumninja.com/"/>
-  <updated>2013-10-07T17:53:07+02:00</updated>
+  <updated>2013-10-16T11:19:39+02:00</updated>
   <id>http://titaniumninja.com/</id>
   <author>
     <name><![CDATA[TiNinja]]></name>
@@ -72,6 +72,15 @@
 <p>Once this setup phase is completed we can launch the application, by selecting the appropriate device target.</p>
 
 <p>As a side note, this mechanism also works for simulator targets, without the need to build the app through the CLI with the <code>--debug-host</code> option.</p>
+
+<h2>Update (16 Oct 2013)</h2>
+
+<p>Matthieu Sieben in a comment points out that instead of using the IP address of your machine you can use the host name followed by <code>.local</code>. This is automatically handled by the <a href="http://www.multicastdns.org/">Multicast DNS</a> feature of the bonjour protocol.</p>
+
+<p>In order to know the host name of your computer you can use the following command from a terminal:</p>
+
+<pre><code>$ hostname
+</code></pre>
 ]]></content>
   </entry>
   
