@@ -8,14 +8,15 @@ footer: true
 ---
 {% img left /images/me.jpg %}
 
-I’m Olivier Morandi, freelance mobile developer and software engineer.
+I’m Olivier Morandi, a software engineer working as a freelance consultant from the North-Western italian Alps.
 
-During most of my career I’ve been a researcher in the field of network processing architectures (the packet processing engines you find in networking appliances). That time was spent designing Domain Specific Languages for enabling more flexibility in the development of packet processing applications and learning the art of compiler creation. I’ve also published a [bunch of papers](http://netgroup.polito.it/pubs?name=Olivier+Morandi&type=All&keyword=none&order=year&submit=submit) on the subject.
+Even if I spent a good part of the last decade doing [academic research](http://netgroup.polito.it/Members/olivier_morandi) on technologies for high-speed network processing, during the last few years I've reinvented myself as a mobile developer, and I've been involved in several projects based on Titanium Mobile, either developing and maintaining mobile apps, or hacking with internals of the framework, extending it and creating native modules.
 
-When I left my work at the university I had the opportunity to reinvent myself working on mobile development projects, designing and developing mobile client-server applications and creating web services. My first projects were cross-platform (iOS and Android) and the timeframe was too short to become proficient with the two native SDKs, so I opted for Titanium Mobile.  I immediately liked Appcelerator’s approach to portability, based on a single language and a common API that’s capable of exposing the characteristics of the specific target platform… And I definitely enjoyed learning JS.
+I am also a <a href="/tcad">Titanium Certified App Developer</a> (TCAD) and <a href="/tcmd">Titanium Certified Mobile Developer</a> (TCMD).
 
-Fast forward to now, I’m involved in several Titanium Mobile projects either developing and maintaining mobile apps, either hacking with the framework, extending it and creating native modules (mainly on iOS). I am now also a <a href="/tcad">Titanium Certified App Developer</a> (TCAD) and <a href="/tcmd">Titanium Certified Mobile Developer</a> (TCMD).
+You can find some of my open source projects on [github](https://github.com/omorandi).
 
-If you need someone for developing/refactoring a Titanium Mobile app, or for creating a custom native extension don’t hesitate to contact me.
+If you need help for developing/refactoring a Titanium Mobile app, or for creating custom native modules, don’t hesitate to contact me.
+
 <hr>
 <a href="http://it.linkedin.com/in/oliviermorandi">![linkedIn](/images/linkedin.png)</a> <a href="http://twitter.com/olivier_morandi">![twitter](/images/twitter.png)</a> <a href="https://github.com/omorandi">![github](/images/github.png)</a>
